@@ -22,8 +22,11 @@ defmodule Buzzword.Bingo.Engine.Server do
   Spawns a new game server process to be registered under `game_name` or
   restarts a game server process to be registered under `game.name`.
   """
-  @spec start_link({String.t(), pos_integer} | Game.t()) :: GenServer.on_start()
-  def start_link({game_name, size} = _tuple),
+  @spec start_link({game_name :: String.t(), pos_integer} | game :: Game.t()) ::
+          GenServer.on_start()
+  def start_link(tuple_or_game)
+
+  def start_link({game_name, size}),
     do: GenServer.start_link(Server, {game_name, size}, name: via(game_name))
 
   def start_link(game),

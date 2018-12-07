@@ -7,7 +7,8 @@ defmodule Buzzword.Bingo.Engine.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      dialyzer: [plt_add_apps: [:mix]]
     ]
   end
 
@@ -15,7 +16,7 @@ defmodule Buzzword.Bingo.Engine.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Buzzword.Bingo.Engine.App, []}
+      mod: {Buzzword.Bingo.Engine.App, :ok}
     ]
   end
 
@@ -24,7 +25,10 @@ defmodule Buzzword.Bingo.Engine.MixProject do
     [
       {:mix_tasks,
        github: "RaymondLoranger/mix_tasks", only: :dev, runtime: false},
-      {:buzzword_cache, github: "RaymondLoranger/buzzword_cache"},
+      {:log_reset, github: "RaymondLoranger/log_reset"},
+      {:buzzword_bingo_game, path: "../buzzword_bingo_game"},
+      {:buzzword_bingo_player, path: "../buzzword_bingo_player"},
+      {:buzzword_bingo_summary, path: "../buzzword_bingo_summary"},
       {:persist_config, "~> 0.1"},
       {:logger_file_backend, "~> 0.0.9"},
       {:earmark, "~> 1.0", only: :dev},

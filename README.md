@@ -1,4 +1,4 @@
-# Buzzword.Bingo.Engine
+# Buzzword Bingo Engine
 
 Models the _Multi-Player Bingo_ game.
 

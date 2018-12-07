@@ -10,9 +10,8 @@ defmodule Buzzword.Bingo.Engine.DynSup do
   @timeout_in_ms 10
 
   @spec start_link(term) :: Supervisor.on_start()
-  def start_link(:ok) do
-    DynamicSupervisor.start_link(DynSup, :ok, name: maybe_wait(DynSup))
-  end
+  def start_link(:ok),
+    do: DynamicSupervisor.start_link(DynSup, :ok, name: maybe_wait(DynSup))
 
   ## Private functions
 
@@ -32,7 +31,5 @@ defmodule Buzzword.Bingo.Engine.DynSup do
   ## Callbacks
 
   @spec init(term) :: {:ok, DynamicSupervisor.sup_flags()} | :ignore
-  def init(:ok) do
-    DynamicSupervisor.init(strategy: :one_for_one)
-  end
+  def init(:ok), do: DynamicSupervisor.init(strategy: :one_for_one)
 end

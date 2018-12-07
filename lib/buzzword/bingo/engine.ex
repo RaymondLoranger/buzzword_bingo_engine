@@ -37,25 +37,22 @@ defmodule Buzzword.Bingo.Engine do
   Stops a game server process normally. It won't be restarted.
   """
   @spec stop_game(String.t()) :: :ok
-  def stop_game(game_name) when is_binary(game_name) do
-    game_name |> Server.via() |> GenServer.stop(:shutdown)
-  end
+  def stop_game(game_name) when is_binary(game_name),
+    do: game_name |> Server.via() |> GenServer.stop(:shutdown)
 
   @doc """
   Returns the summary of a game.
   """
   @spec summary(String.t()) :: Summary.t()
-  def summary(game_name) when is_binary(game_name) do
-    game_name |> Server.via() |> GenServer.call(:summary)
-  end
+  def summary(game_name) when is_binary(game_name),
+    do: game_name |> Server.via() |> GenServer.call(:summary)
 
   @doc """
   Prints the summary of a game as a table.
   """
   @spec summary_table(String.t()) :: :ok
-  def summary_table(game_name) when is_binary(game_name) do
-    game_name |> summary() |> Summary.table()
-  end
+  def summary_table(game_name) when is_binary(game_name),
+    do: game_name |> summary() |> Summary.table()
 
   @doc """
   Marks a square for a player.

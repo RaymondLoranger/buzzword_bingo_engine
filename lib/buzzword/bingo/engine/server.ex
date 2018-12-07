@@ -83,7 +83,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   def handle_call(:summary, _from, game), do: reply(game)
 
   def handle_call({:mark, phrase, player}, _from, game),
-    do: game |> Game.mark(phrase, player) |> reply()
+    do: game |> Game.mark(phrase, player) |> save() |> reply()
 
   @spec handle_info(:timeout, Game.t()) :: {:stop, reason :: tuple, Game.t()}
   def handle_info(:timeout, game), do: {:stop, {:shutdown, :timeout}, game}

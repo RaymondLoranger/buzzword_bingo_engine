@@ -69,6 +69,12 @@ defmodule Buzzword.Bingo.Engine do
     |> GenServer.call({:mark, phrase, player})
   end
 
+  @doc """
+  Returns the `pid` of the game server process registered under the
+  given `game_name`, or `nil` if no process is registered.
+  """
+  defdelegate game_pid(game_name), to: Server
+
   ## Private functions
 
   # On restarts, wait if name not yet registered...
@@ -76,7 +82,7 @@ defmodule Buzzword.Bingo.Engine do
   defp maybe_wait(game_name, 0), do: game_name
 
   defp maybe_wait(game_name, timeout_times_left) do
-    case Server.game_pid(game_name) do
+    case game_pid(game_name) do
       pid when is_pid(pid) ->
         game_name
 

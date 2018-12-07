@@ -8,7 +8,13 @@ defmodule Buzzword.Bingo.Engine.Server.Error do
   require Logger
 
   @spec log(atom, any, any) :: :ok
-  def log(:terminate, reason, game) do
+  def log(:terminate, reason, game),
+    do: if(Mix.env() == :test, do: :ok, else: do_log(:terminate, reason, game))
+
+  ## Private functions
+
+  @spec do_log(atom, any, any) :: :ok
+  defp do_log(:terminate, reason, game) do
     """
     \n#{game.name |> Server.via() |> inspect()} #{self() |> inspect()}
     `terminate` reason...

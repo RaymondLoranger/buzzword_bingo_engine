@@ -5,7 +5,7 @@ defmodule Buzzword.Bingo.Engine.Server.Restart do
   use PersistConfig
 
   alias __MODULE__
-  alias Islands.Engine.{DynSup, Server}
+  alias Buzzword.Bingo.Engine.{DynSup, Server}
 
   @ets Application.get_env(@app, :ets_name)
 

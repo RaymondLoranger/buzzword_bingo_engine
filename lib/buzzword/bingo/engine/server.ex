@@ -11,6 +11,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   alias Buzzword.Bingo.{Game, Summary}
 
   @type from :: GenServer.from()
+  @type on_start :: GenServer.on_start()
   @type reply :: {:reply, Summary.t(), Game.t(), timeout}
 
   @ets Application.get_env(@app, :ets_name)
@@ -21,8 +22,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   @doc """
   Spawns a new game server process to be registered under `game_name`.
   """
-  @spec start_link({game_name :: String.t(), size :: pos_integer}) ::
-          GenServer.on_start()
+  @spec start_link({game_name :: String.t(), size :: pos_integer}) :: on_start
   def start_link({game_name, size} = _tuple),
     do: GenServer.start_link(Server, {game_name, size}, name: via(game_name))
 

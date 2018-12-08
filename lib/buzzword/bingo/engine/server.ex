@@ -58,10 +58,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   ## Callbacks
 
   @spec init({String.t(), pos_integer}) :: {:ok, Game.t(), timeout}
-  def init({game_name, size}) do
-    game = game(game_name, size)
-    {:ok, game, @timeout}
-  end
+  def init({game_name, size}), do: {:ok, game(game_name, size), @timeout}
 
   @spec handle_call(term, from, Game.t()) :: reply
   def handle_call(:summary, _from, game), do: reply(game)

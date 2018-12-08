@@ -14,6 +14,7 @@ defmodule Buzzword.Bingo.Engine do
   alias Buzzword.Bingo.Engine.{DynSup, Server}
   alias Buzzword.Bingo.{Player, Summary}
 
+  @reg Application.get_env(@app, :registry)
   @size_range Application.get_env(@app, :size_range)
   @timeout_in_ms 10
   @timeout_times 100
@@ -61,6 +62,16 @@ defmodule Buzzword.Bingo.Engine do
   end
 
   @doc """
+  Returns a sorted list of registered game names.
+  """
+  @spec game_names :: [String.t() | atom]
+  def game_names do
+    DynamicSupervisor.which_children(DynSup)
+    |> Enum.map(&child_name/1)
+    |> Enum.sort()
+  end
+
+  @doc """
   Returns the `pid` of the game server process registered under the
   given `game_name`, or `nil` if no process is registered.
   """
@@ -68,6 +79,19 @@ defmodule Buzzword.Bingo.Engine do
   def game_pid(game_name), do: game_name |> Server.via() |> GenServer.whereis()
 
   ## Private functions
+
+  @spec child_name(tuple) :: String.t() | atom
+  defp child_name({:undefined, pid, :worker, modules}) when is_pid(pid) do
+    if Server in modules do
+      [{Server, game_name}] = Registry.keys(@reg, pid)
+      game_name
+    else
+      :worker
+    end
+  end
+
+  defp child_name({:undefined, :restarting, _type, _modules}), do: :restarting
+  defp child_name({:undefined, _pid, :supervisor, _modules}), do: :supervisor
 
   # On restarts, wait if name not yet registered...
   @spec maybe_wait(String.t(), non_neg_integer) :: String.t()

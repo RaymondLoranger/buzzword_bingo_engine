@@ -25,7 +25,7 @@ defmodule Buzzword.Bingo.Engine do
   def start_game(game_name, size)
       when is_binary(game_name) and size in @size_range do
     child_spec = %{
-      id: Server,
+      id: :start,
       start: {Server, :start_link, [game_name, size]},
       restart: :transient
     }

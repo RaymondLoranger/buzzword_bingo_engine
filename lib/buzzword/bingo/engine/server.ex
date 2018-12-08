@@ -3,7 +3,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   A server process that holds a game struct as its state.
   """
 
-  use GenServer
+  use GenServer, id: :restart, restart: :transient
   use PersistConfig
 
   alias __MODULE__

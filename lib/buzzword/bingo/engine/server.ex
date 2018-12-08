@@ -27,7 +27,7 @@ defmodule Buzzword.Bingo.Engine.Server do
     do: GenServer.start_link(Server, {game_name, size}, name: via(game_name))
 
   @doc """
-  Returns a tuple used to register and lookup a game server process by name.
+  Returns a tuple used to register and look up a game server process by name.
   """
   @spec via(String.t()) :: {:via, Registry, tuple}
   def via(game_name), do: {:via, Registry, {@reg, key(game_name)}}

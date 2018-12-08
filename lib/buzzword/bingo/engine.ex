@@ -24,13 +24,13 @@ defmodule Buzzword.Bingo.Engine do
   @spec start_game(String.t(), pos_integer) :: Supervisor.on_start_child()
   def start_game(game_name, size)
       when is_binary(game_name) and size in @size_range do
-    # child_spec = %{
-    #   id: Server,
-    #   start: {Server, :start_link, [game_name, size]},
-    #   restart: :transient
-    # }
-    # DynamicSupervisor.start_child(DynSup, child_spec)
-    DynamicSupervisor.start_child(DynSup, {Server, {game_name, size}})
+    child_spec = %{
+      id: Server,
+      start: {Server, :start_link, [game_name, size]},
+      restart: :transient
+    }
+
+    DynamicSupervisor.start_child(DynSup, child_spec)
   end
 
   @doc """

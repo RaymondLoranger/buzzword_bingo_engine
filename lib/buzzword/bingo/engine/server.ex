@@ -31,13 +31,6 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec via(String.t()) :: {:via, Registry, tuple}
   def via(game_name), do: {:via, Registry, {@reg, key(game_name)}}
 
-  @doc """
-  Returns the `pid` of the game server process registered under the
-  given `game_name`, or `nil` if no process is registered.
-  """
-  @spec game_pid(String.t()) :: pid | nil
-  def game_pid(game_name), do: game_name |> via() |> GenServer.whereis()
-
   ## Private functions
 
   @spec key(String.t()) :: tuple

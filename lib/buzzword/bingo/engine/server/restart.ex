@@ -20,7 +20,7 @@ defmodule Buzzword.Bingo.Engine.Server.Restart do
     |> :ets.match_object({{Server, :_}, :_})
     |> Enum.each(fn {{Server, _game_name}, game} ->
       # Child may already be started...
-      DynamicSupervisor.start_child(DynSup, {Server, game})
+      DynamicSupervisor.start_child(DynSup, {Server, {game.name, game.size}})
     end)
   end
 

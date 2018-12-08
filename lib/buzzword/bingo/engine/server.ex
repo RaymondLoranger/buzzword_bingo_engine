@@ -3,7 +3,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   A server process that holds a game struct as its state.
   """
 
-  use GenServer, id: :restart, restart: :transient
+  use GenServer, restart: :transient
   use PersistConfig
 
   alias __MODULE__
@@ -24,13 +24,6 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec start_link(String.t(), pos_integer) :: GenServer.on_start()
   def start_link(game_name, size),
     do: GenServer.start_link(Server, {game_name, size}, name: via(game_name))
-
-  @doc """
-  Restarts a game server process to be registered under `game.name`.
-  """
-  @spec start_link(Game.t()) :: GenServer.on_start()
-  def start_link(game),
-    do: GenServer.start_link(Server, game, name: via(game.name))
 
   @doc """
   Returns a tuple used to register and lookup a game server process by name.
@@ -75,9 +68,6 @@ defmodule Buzzword.Bingo.Engine.Server do
     game = game(game_name, size)
     {:ok, game, @timeout}
   end
-
-  @spec init(Game.t()) :: {:ok, Game.t(), timeout}
-  def init(game), do: {:ok, game, @timeout}
 
   @spec handle_call(term, from, Game.t()) :: reply
   def handle_call(:summary, _from, game), do: reply(game)

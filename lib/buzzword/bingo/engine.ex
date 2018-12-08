@@ -20,10 +20,10 @@ defmodule Buzzword.Bingo.Engine do
   @timeout_times 100
 
   @doc """
-  Starts a game server process and supervises it.
+  Starts a new game server process and supervises it.
   """
-  @spec start_game(String.t(), pos_integer) :: Supervisor.on_start_child()
-  def start_game(game_name, size)
+  @spec new_game(String.t(), pos_integer) :: Supervisor.on_start_child()
+  def new_game(game_name, size)
       when is_binary(game_name) and size in @size_range do
     DynamicSupervisor.start_child(DynSup, {Server, {game_name, size}})
   end
@@ -31,8 +31,8 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Stops a game server process normally. It won't be restarted.
   """
-  @spec stop_game(String.t()) :: :ok
-  def stop_game(game_name) when is_binary(game_name),
+  @spec end_game(String.t()) :: :ok
+  def end_game(game_name) when is_binary(game_name),
     do: game_name |> Server.via() |> GenServer.stop(:shutdown)
 
   @doc """

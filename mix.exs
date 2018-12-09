@@ -25,7 +25,7 @@ defmodule Buzzword.Bingo.Engine.MixProject do
     [
       {:mix_tasks,
        github: "RaymondLoranger/mix_tasks", only: :dev, runtime: false},
-      {:log_reset, github: "RaymondLoranger/log_reset"},
+      {:log_reset, "~> 0.1"},
       {:buzzword_bingo_game, path: "../buzzword_bingo_game"},
       {:buzzword_bingo_player, path: "../buzzword_bingo_player"},
       {:buzzword_bingo_summary, path: "../buzzword_bingo_summary"},

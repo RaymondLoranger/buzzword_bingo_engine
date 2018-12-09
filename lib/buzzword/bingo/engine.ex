@@ -11,8 +11,10 @@ defmodule Buzzword.Bingo.Engine do
   \n##### #{@course_ref}
   """
 
+  alias __MODULE__.GameNotStarted
   alias Buzzword.Bingo.Engine.{DynSup, Server}
   alias Buzzword.Bingo.{Player, Summary}
+  alias IO.ANSI
 
   @reg Application.get_env(@app, :registry)
   @size_range Application.get_env(@app, :size_range)
@@ -46,8 +48,12 @@ defmodule Buzzword.Bingo.Engine do
   Prints the summary of a game as a table.
   """
   @spec summary_table(String.t()) :: :ok
-  def summary_table(game_name) when is_binary(game_name),
-    do: game_name |> summary() |> Summary.table()
+  def summary_table(game_name) when is_binary(game_name) do
+    game_name |> summary() |> Summary.table()
+  catch
+    :exit, "no process" <> _etc ->
+      game_name |> GameNotStarted.message() |> ANSI.format() |> IO.puts()
+  end
 
   @doc """
   Marks a square for a player.
@@ -58,10 +64,15 @@ defmodule Buzzword.Bingo.Engine do
     game_name |> Server.via() |> GenServer.call({:mark, phrase, player})
   catch
     :exit, "no process" <> _etc ->
-      game_name
-      |> wait(@times)
-      |> Server.via()
-      |> GenServer.call({:mark, phrase, player})
+      try do
+        game_name
+        |> wait(@times)
+        |> Server.via()
+        |> GenServer.call({:mark, phrase, player})
+      catch
+        :exit, "no process" <> _etc ->
+          game_name |> GameNotStarted.message() |> ANSI.format() |> IO.puts()
+      end
   end
 
   @doc """

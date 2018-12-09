@@ -17,7 +17,7 @@ defmodule Buzzword.Bingo.Engine do
   @reg Application.get_env(@app, :registry)
   @size_range Application.get_env(@app, :size_range)
   @timeout_in_ms 10
-  @timeout_times 100
+  @times 100
 
   @doc """
   Starts a new game server process and supervises it.
@@ -55,10 +55,13 @@ defmodule Buzzword.Bingo.Engine do
   @spec mark(String.t(), String.t(), Player.t()) :: Summary.t()
   def mark(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase) do
-    game_name
-    |> maybe_wait(@timeout_times)
-    |> Server.via()
-    |> GenServer.call({:mark, phrase, player})
+    game_name |> Server.via() |> GenServer.call({:mark, phrase, player})
+  catch
+    :exit, "no process" <> _etc ->
+      game_name
+      |> wait(@times)
+      |> Server.via()
+      |> GenServer.call({:mark, phrase, player})
   end
 
   @doc """
@@ -94,17 +97,17 @@ defmodule Buzzword.Bingo.Engine do
   defp child_name({:undefined, _pid, :supervisor, _modules}), do: :supervisor
 
   # On restarts, wait if name not yet registered...
-  @spec maybe_wait(String.t(), non_neg_integer) :: String.t()
-  defp maybe_wait(game_name, 0), do: game_name
+  @spec wait(String.t(), non_neg_integer) :: String.t()
+  defp wait(game_name, 0), do: game_name
 
-  defp maybe_wait(game_name, timeout_times_left) do
+  defp wait(game_name, times_left) do
     case game_pid(game_name) do
       pid when is_pid(pid) ->
         game_name
 
       nil ->
         Process.sleep(@timeout_in_ms)
-        maybe_wait(game_name, timeout_times_left - 1)
+        wait(game_name, times_left - 1)
     end
   end
 end

@@ -11,69 +11,52 @@ defmodule Buzzword.Bingo.Engine do
   \n##### #{@course_ref}
   """
 
-  alias __MODULE__.GameNotStarted
-  alias Buzzword.Bingo.Engine.{DynSup, Server}
+  alias Buzzword.Bingo.Engine.{DynSup, Proxy, Server}
   alias Buzzword.Bingo.{Player, Summary}
-  alias IO.ANSI
 
   @reg Application.get_env(@app, :registry)
   @size_range Application.get_env(@app, :size_range)
-  @timeout_in_ms 10
-  @times 100
 
   @doc """
   Starts a new game server process and supervises it.
   """
   @spec new_game(String.t(), pos_integer) :: Supervisor.on_start_child()
   def new_game(game_name, size)
-      when is_binary(game_name) and size in @size_range do
-    DynamicSupervisor.start_child(DynSup, {Server, {game_name, size}})
-  end
+      when is_binary(game_name) and size in @size_range,
+      do: DynamicSupervisor.start_child(DynSup, {Server, {game_name, size}})
 
   @doc """
   Stops a game server process normally. It won't be restarted.
   """
   @spec end_game(String.t()) :: :ok
   def end_game(game_name) when is_binary(game_name),
-    do: game_name |> Server.via() |> GenServer.stop(:shutdown)
+    do: Proxy.stop(:shutdown, game_name, __ENV__.function)
 
   @doc """
   Returns the summary of a game.
   """
-  @spec summary(String.t()) :: Summary.t()
+  @spec summary(String.t()) :: Summary.t() | :ok
   def summary(game_name) when is_binary(game_name),
-    do: game_name |> Server.via() |> GenServer.call(:summary)
+    do: Proxy.call(:summary, game_name, __ENV__.function)
 
   @doc """
   Prints the summary of a game as a table.
   """
   @spec summary_table(String.t()) :: :ok
   def summary_table(game_name) when is_binary(game_name) do
-    game_name |> summary() |> Summary.table()
-  catch
-    :exit, "no process" <> _etc ->
-      game_name |> GameNotStarted.message() |> ANSI.format() |> IO.puts()
+    case summary(game_name) do
+      %Summary{} = summary -> Summary.table(summary)
+      :ok -> :ok
+    end
   end
 
   @doc """
   Marks a square for a player.
   """
-  @spec mark(String.t(), String.t(), Player.t()) :: Summary.t()
+  @spec mark(String.t(), String.t(), Player.t()) :: Summary.t() | :ok
   def mark(game_name, phrase, %Player{} = player)
-      when is_binary(game_name) and is_binary(phrase) do
-    game_name |> Server.via() |> GenServer.call({:mark, phrase, player})
-  catch
-    :exit, "no process" <> _etc ->
-      try do
-        game_name
-        |> wait(@times)
-        |> Server.via()
-        |> GenServer.call({:mark, phrase, player})
-      catch
-        :exit, "no process" <> _etc ->
-          game_name |> GameNotStarted.message() |> ANSI.format() |> IO.puts()
-      end
-  end
+      when is_binary(game_name) and is_binary(phrase),
+      do: Proxy.call({:mark, phrase, player}, game_name, __ENV__.function)
 
   @doc """
   Returns a sorted list of registered game names.
@@ -106,19 +89,4 @@ defmodule Buzzword.Bingo.Engine do
 
   defp child_name({:undefined, :restarting, _type, _modules}), do: :restarting
   defp child_name({:undefined, _pid, :supervisor, _modules}), do: :supervisor
-
-  # On restarts, wait if name not yet registered...
-  @spec wait(String.t(), non_neg_integer) :: String.t()
-  defp wait(game_name, 0), do: game_name
-
-  defp wait(game_name, times_left) do
-    case game_pid(game_name) do
-      pid when is_pid(pid) ->
-        game_name
-
-      nil ->
-        Process.sleep(@timeout_in_ms)
-        wait(game_name, times_left - 1)
-    end
-  end
 end

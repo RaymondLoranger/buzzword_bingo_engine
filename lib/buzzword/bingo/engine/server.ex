@@ -17,7 +17,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   @ets Application.get_env(@app, :ets_name)
   @reg Application.get_env(@app, :registry)
   @timeout :timer.hours(2)
-  @timeout_in_ms 500
+  @wait 500
 
   @doc """
   Spawns a new game server process to be registered under `game_name`.
@@ -75,13 +75,13 @@ defmodule Buzzword.Bingo.Engine.Server do
     :ok = Info.log(:terminate, reason, game)
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
-    Process.sleep(@timeout_in_ms)
+    Process.sleep(@wait)
   end
 
   def terminate(reason, game) do
     :ok = Error.log(:terminate, reason, game)
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
-    Process.sleep(@timeout_in_ms)
+    Process.sleep(@wait)
   end
 end

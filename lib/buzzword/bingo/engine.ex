@@ -30,24 +30,23 @@ defmodule Buzzword.Bingo.Engine do
   """
   @spec end_game(String.t()) :: :ok
   def end_game(game_name) when is_binary(game_name),
-    do: Proxy.stop(:shutdown, game_name, __ENV__.function)
+    do: Proxy.stop(:shutdown, game_name)
 
   @doc """
   Returns the summary of a game.
   """
   @spec summary(String.t()) :: Summary.t() | :ok
   def summary(game_name) when is_binary(game_name),
-    do: Proxy.call(:summary, game_name, __ENV__.function)
+    do: Proxy.call(:summary, game_name)
 
   @doc """
   Prints the summary of a game as a table.
   """
   @spec summary_table(String.t()) :: :ok
   def summary_table(game_name) when is_binary(game_name) do
-    case summary(game_name) do
-      %Summary{} = summary -> Summary.table(summary)
-      :ok -> :ok
-    end
+    with %Summary{} = summary <- summary(game_name),
+         do: Summary.table(summary),
+         else: (:ok -> :ok)
   end
 
   @doc """
@@ -56,7 +55,7 @@ defmodule Buzzword.Bingo.Engine do
   @spec mark(String.t(), String.t(), Player.t()) :: Summary.t() | :ok
   def mark(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
-      do: Proxy.call({:mark, phrase, player}, game_name, __ENV__.function)
+      do: Proxy.call({:mark, phrase, player}, game_name)
 
   @doc """
   Returns a sorted list of registered game names.

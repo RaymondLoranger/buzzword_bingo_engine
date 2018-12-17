@@ -9,29 +9,28 @@ defmodule Buzzword.Bingo.Engine.Server.Error do
 
   @spec log(atom, any, any) :: :ok
   def log(:terminate, reason, game) do
-    if Mix.env() == :test do
-      :ok
-    else
-      do_log(:terminate, reason, game)
-    end
+    log(:terminate, reason, game, Mix.env())
   end
 
   ## Private functions
 
-  @spec do_log(atom, any, any) :: :ok
-  defp do_log(:terminate, reason, game) do
-    Logger.remove_backend(:console, flush: true)
+  @spec log(atom, any, any, atom) :: :ok
+  defp log(:terminate, _reason, _game, :test = _env), do: :ok
 
-    """
-    \n#{game.name |> Server.via() |> inspect()} #{self() |> inspect()}
-    `terminate` reason...
-    #{inspect(reason, pretty: true)}
-    game being terminated...
-    #{inspect(game, pretty: true)}
-    """
-    |> Logger.error()
+  defp log(:terminate, reason, game, _env) do
+    :ok = Logger.remove_backend(:console, flush: true)
 
-    Logger.add_backend(:console, flush: true)
+    :ok =
+      """
+      \n#{game.name |> Server.via() |> inspect()} #{self() |> inspect()}
+      `terminate` reason...
+      #{inspect(reason, pretty: true)}
+      game being terminated...
+      #{inspect(game, pretty: true)}
+      """
+      |> Logger.error()
+
+    {:ok, _pid} = Logger.add_backend(:console, flush: true)
     :ok
   end
 end

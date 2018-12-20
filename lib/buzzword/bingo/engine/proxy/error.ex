@@ -1,13 +1,18 @@
 defmodule Buzzword.Bingo.Engine.Proxy.Error do
   @moduledoc false
 
+  use PersistConfig
+
   require Logger
 
+  @env Application.get_env(@app, :env)
+
   @spec log(atom, term) :: :ok
-  def log(:exit, reason), do: log(:exit, reason, Mix.env())
+  def log(:exit, reason), do: log(:exit, reason, @env)
 
   ## Private functions
 
+  @dialyzer {:nowarn_function, log: 3}
   @spec log(atom, term, atom) :: :ok
   defp log(:exit, _reason, :test = _env), do: :ok
 

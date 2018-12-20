@@ -3,17 +3,22 @@ defmodule Buzzword.Bingo.Engine.Server.Error do
   Logs error messages.
   """
 
+  use PersistConfig
+
   alias Buzzword.Bingo.Engine.Server
 
   require Logger
 
+  @env Application.get_env(@app, :env)
+
   @spec log(atom, any, any) :: :ok
   def log(:terminate, reason, game) do
-    log(:terminate, reason, game, Mix.env())
+    log(:terminate, reason, game, @env)
   end
 
   ## Private functions
 
+  @dialyzer {:nowarn_function, log: 4}
   @spec log(atom, any, any, atom) :: :ok
   defp log(:terminate, _reason, _game, :test = _env), do: :ok
 

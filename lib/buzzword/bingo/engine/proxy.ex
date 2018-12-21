@@ -1,6 +1,6 @@
 defmodule Buzzword.Bingo.Engine.Proxy do
   @moduledoc """
-  Runs function `GenServer.call` on behalf of module `Buzzword.Bingo.Engine`
+  Runs `GenServer` functions on behalf of module `Buzzword.Bingo.Engine`
   while providing increased fault-tolerance capability.
   """
 

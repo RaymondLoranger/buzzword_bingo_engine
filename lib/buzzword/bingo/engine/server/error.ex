@@ -1,41 +1,31 @@
 defmodule Buzzword.Bingo.Engine.Server.Error do
-  @moduledoc """
-  Logs error messages.
-  """
+  @moduledoc false
 
-  use PersistConfig
-
-  alias Buzzword.Bingo.Engine.Server
+  alias Buzzword.Bingo.Engine.{App, Server}
 
   require Logger
 
-  @env Application.get_env(@app, :env)
-
-  @spec log(atom, any, any) :: :ok
-  def log(:terminate, reason, game) do
-    log(:terminate, reason, game, @env)
-  end
+  @spec log(atom, tuple) :: :ok
+  def log(event, details), do: do_log(event, details, App.log?())
 
   ## Private functions
 
-  @dialyzer {:nowarn_function, log: 4}
-  @spec log(atom, any, any, atom) :: :ok
-  defp log(:terminate, _reason, _game, :test = _env), do: :ok
+  @spec do_log(atom, tuple, boolean) :: :ok
+  defp do_log(_event, _details, false = _log?), do: :ok
 
-  defp log(:terminate, reason, game, _env) do
-    :ok = Logger.remove_backend(:console, flush: true)
+  defp do_log(:terminate, {reason, game}, true = _log?) do
+    removed = Logger.remove_backend(:console, flush: true)
 
-    :ok =
-      """
-      \n#{game.name |> Server.via() |> inspect()} #{self() |> inspect()}
-      `terminate` reason...
-      #{inspect(reason, pretty: true)}
-      game being terminated...
-      #{inspect(game, pretty: true)}
-      """
-      |> Logger.error()
+    """
+    \n#{game.name |> Server.via() |> inspect()} #{self() |> inspect()}
+    `terminate` reason...
+    #{inspect(reason, pretty: true)}
+    game being terminated...
+    #{inspect(game, pretty: true)}
+    """
+    |> Logger.error()
 
-    {:ok, _pid} = Logger.add_backend(:console, flush: true)
+    if removed == :ok, do: Logger.add_backend(:console, flush: true)
     :ok
   end
 end

@@ -21,4 +21,7 @@ defmodule Buzzword.Bingo.Engine.App do
     ]
     |> Supervisor.start_link(name: App, strategy: :rest_for_one)
   end
+
+  @spec log? :: boolean
+  def log?, do: Application.get_env(@app, :log?) || false
 end

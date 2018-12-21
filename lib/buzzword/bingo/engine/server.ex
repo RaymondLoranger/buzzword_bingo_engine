@@ -47,7 +47,7 @@ defmodule Buzzword.Bingo.Engine.Server do
 
   @spec save(Game.t()) :: Game.t()
   defp save(game) do
-    :ok = Info.log(:save, game)
+    :ok = Info.log(:save, {game})
     true = :ets.insert(@ets, {key(game.name), game})
     game
   end
@@ -72,14 +72,14 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec terminate(term, Game.t()) :: :ok
   def terminate(reason, game)
       when reason in [:shutdown, {:shutdown, :timeout}] do
-    :ok = Info.log(:terminate, reason, game)
+    :ok = Info.log(:terminate, {reason, game})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
     Process.sleep(@wait)
   end
 
   def terminate(reason, game) do
-    :ok = Error.log(:terminate, reason, game)
+    :ok = Error.log(:terminate, {reason, game})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
     Process.sleep(@wait)

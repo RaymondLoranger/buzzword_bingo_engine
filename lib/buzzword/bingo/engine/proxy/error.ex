@@ -1,32 +1,28 @@
 defmodule Buzzword.Bingo.Engine.Proxy.Error do
   @moduledoc false
 
-  use PersistConfig
+  alias Buzzword.Bingo.Engine.App
 
   require Logger
 
-  @env Application.get_env(@app, :env)
-
-  @spec log(atom, term) :: :ok
-  def log(:exit, reason), do: log(:exit, reason, @env)
+  @spec log(atom, tuple) :: :ok
+  def log(event, details), do: do_log(event, details, App.log?())
 
   ## Private functions
 
-  @dialyzer {:nowarn_function, log: 3}
-  @spec log(atom, term, atom) :: :ok
-  defp log(:exit, _reason, :test = _env), do: :ok
+  @spec do_log(atom, tuple, boolean) :: :ok
+  defp do_log(_event, _details, false = _log?), do: :ok
 
-  defp log(:exit, reason, _env) do
-    :ok = Logger.remove_backend(:console, flush: true)
+  defp do_log(:exit, {reason}, true = _log?) do
+    removed = Logger.remove_backend(:console, flush: true)
 
-    :ok =
-      Logger.error("""
-      \n`exit` caught...
-      • Reason:
-      #{inspect(reason)}
-      """)
+    Logger.error("""
+    \n`exit` caught...
+    • Reason:
+    #{inspect(reason)}
+    """)
 
-    {:ok, _pid} = Logger.add_backend(:console, flush: true)
+    if removed == :ok, do: Logger.add_backend(:console, flush: true)
     :ok
   end
 end

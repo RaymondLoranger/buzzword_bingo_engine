@@ -7,7 +7,7 @@ defmodule Buzzword.Bingo.Engine.Server do
   use PersistConfig
 
   alias __MODULE__
-  alias __MODULE__.{Error, Info}
+  alias Buzzword.Bingo.Engine.Log
   alias Buzzword.Bingo.{Game, Summary}
 
   @type from :: GenServer.from()
@@ -40,14 +40,14 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec game(String.t(), pos_integer) :: Game.t()
   defp game(game_name, size) do
     case :ets.lookup(@ets, key(game_name)) do
-      [] -> game_name |> Game.new(size) |> save()
+      [] -> game_name |> Game.new(size) |> save(nil)
       [{_key, game}] -> game
     end
   end
 
-  @spec save(Game.t()) :: Game.t()
-  defp save(game) do
-    :ok = Info.log(:save, {game})
+  @spec save(Game.t(), term) :: Game.t()
+  defp save(game, request) do
+    :ok = Log.info(:save, {game, request})
     true = :ets.insert(@ets, {key(game.name), game})
     game
   end
@@ -63,8 +63,8 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec handle_call(term, from, Game.t()) :: reply
   def handle_call(:summary, _from, game), do: reply(game)
 
-  def handle_call({:mark, phrase, player}, _from, game),
-    do: game |> Game.mark(phrase, player) |> save() |> reply()
+  def handle_call({:mark, phrase, player} = request, _from, game),
+    do: game |> Game.mark(phrase, player) |> save(request) |> reply()
 
   @spec handle_info(:timeout, Game.t()) :: {:stop, reason :: tuple, Game.t()}
   def handle_info(:timeout, game), do: {:stop, {:shutdown, :timeout}, game}
@@ -72,14 +72,14 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec terminate(term, Game.t()) :: :ok
   def terminate(reason, game)
       when reason in [:shutdown, {:shutdown, :timeout}] do
-    :ok = Info.log(:terminate, {reason, game})
+    :ok = Log.info(:terminate, {reason, game})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
     Process.sleep(@wait)
   end
 
   def terminate(reason, game) do
-    :ok = Error.log(:terminate, {reason, game})
+    :ok = Log.error(:terminate, {reason, game})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
     Process.sleep(@wait)

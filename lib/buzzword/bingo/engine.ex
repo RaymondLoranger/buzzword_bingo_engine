@@ -2,6 +2,7 @@
 # │ Based on the course "Multi-Player Bingo" by Mike and Nicole Clark. │
 # └────────────────────────────────────────────────────────────────────┘
 defmodule Buzzword.Bingo.Engine do
+  use GenServer.Proxy
   use PersistConfig
 
   @course_ref Application.get_env(@app, :course_ref)
@@ -11,7 +12,7 @@ defmodule Buzzword.Bingo.Engine do
   \n##### #{@course_ref}
   """
 
-  alias Buzzword.Bingo.Engine.{DynSup, Proxy, Server}
+  alias Buzzword.Bingo.Engine.{DynSup, Server}
   alias Buzzword.Bingo.{Player, Summary}
 
   @reg Application.get_env(@app, :registry)
@@ -30,14 +31,14 @@ defmodule Buzzword.Bingo.Engine do
   """
   @spec end_game(String.t()) :: :ok
   def end_game(game_name) when is_binary(game_name),
-    do: Proxy.stop(:shutdown, game_name)
+    do: stop(:shutdown, game_name)
 
   @doc """
   Returns the summary of a game.
   """
   @spec summary(String.t()) :: Summary.t() | :ok
   def summary(game_name) when is_binary(game_name),
-    do: Proxy.call(:summary, game_name)
+    do: call(:summary, game_name)
 
   @doc """
   Prints the summary of a game as a table.
@@ -55,7 +56,7 @@ defmodule Buzzword.Bingo.Engine do
   @spec mark(String.t(), String.t(), Player.t()) :: Summary.t() | :ok
   def mark(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
-      do: Proxy.call({:mark, phrase, player}, game_name)
+      do: call({:mark, phrase, player}, game_name)
 
   @doc """
   Returns a sorted list of registered game names.

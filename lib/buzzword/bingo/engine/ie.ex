@@ -1,6 +1,16 @@
 defmodule Buzzword.Bingo.Engine.IE do
   @moduledoc false
 
+  # Example of an IEx session...
+  #
+  #   use Buzzword.Bingo.Engine.IE
+  #   ray = Player.new("Ray", "light_yellow")
+  #   Engine.new_game("blue-moon", 4)
+  #   Engine.summary_table("blue-moon")
+  #   Engine.mark("blue-moon", "Drill Down", ray)
+  #   Engine.summary_table("blue-moon")
+  #   etc.
+
   alias Buzzword.Bingo.Engine
 
   # Supervisor option defaults for :max_restarts and :max_seconds
@@ -14,13 +24,13 @@ defmodule Buzzword.Bingo.Engine.IE do
     quote do
       import unquote(__MODULE__)
       alias unquote(__MODULE__)
-      alias Buzzword.Bingo.Engine.Proxy.{Error, GameNotStarted, Info}
-      alias Buzzword.Bingo.Engine.Server.{Error, Info, Restart}
+      alias Buzzword.Bingo.Engine.Server.Restart
 
       alias Buzzword.Bingo.Engine.{
         App,
+        Callback,
         DynSup,
-        Proxy,
+        Log,
         Server,
         Sup
       }

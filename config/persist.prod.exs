@@ -1,5 +1,4 @@
 use Mix.Config
 
 config :log_reset, reset?: true
-config :buzzword_cache, log?: true
-config :buzzword_bingo_engine, log?: true
+config :file_only_logger, log?: true

@@ -5,10 +5,14 @@ defmodule Buzzword.Bingo.Engine.IE do
   #
   #   use Buzzword.Bingo.Engine.IE
   #   ray = Player.new("Ray", "light_yellow")
-  #   Engine.new_game("blue-moon", 4)
-  #   Engine.summary_table("blue-moon")
-  #   Engine.mark("blue-moon", "Drill Down", ray)
-  #   Engine.summary_table("blue-moon")
+  #   Engine.new_game("spring-moon", 4)
+  #   Engine.new_game("crimson-sun", 5)
+  #   Engine.game_pid("spring-moon")
+  #   Engine.game_pid("crimson-sun")
+  #   Engine.game_names
+  #   Engine.summary_table("spring-moon")
+  #   Engine.mark("spring-moon", "Drill Down", ray)
+  #   Engine.summary_table("spring-moon")
   #   etc.
 
   alias Buzzword.Bingo.Engine

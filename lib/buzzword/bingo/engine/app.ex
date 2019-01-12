@@ -16,7 +16,7 @@ defmodule Buzzword.Bingo.Engine.App do
 
     [
       {Registry, keys: :unique, name: @reg},
-      # Child spec relying on use GenServer...
+      # Child spec relying on use Supervisor...
       {Sup, :ok}
     ]
     |> Supervisor.start_link(name: App, strategy: :rest_for_one)

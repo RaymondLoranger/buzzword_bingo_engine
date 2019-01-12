@@ -1,6 +1,5 @@
 defmodule Buzzword.Bingo.Engine.Log do
   use File.Only.Logger
-  use PersistConfig
 
   alias Buzzword.Bingo.Engine.Server
 
@@ -9,12 +8,12 @@ defmodule Buzzword.Bingo.Engine.Log do
     \nTerminating game...
     • Server:
       #{game.name |> Server.via() |> inspect(pretty: true)}
-    • PID: #{self() |> inspect(pretty: true)}
+    • Server PID: #{self() |> inspect(pretty: true)}
     • 'terminate' reason: #{inspect(reason, pretty: true)}
     • Game being terminated:
       #{inspect(game, pretty: true)}
-    • App: #{Mix.Project.config()[:app]}
-    • Library: #{@app}
+    • App: #{:application.get_application() |> elem(1)}
+    • Library: #{Application.get_application(__MODULE__)}
     • Module: #{inspect(__MODULE__)}
     """
   end
@@ -24,12 +23,12 @@ defmodule Buzzword.Bingo.Engine.Log do
     \nTerminating game...
     • Server:
       #{game.name |> Server.via() |> inspect(pretty: true)}
-    • PID: #{self() |> inspect(pretty: true)}
+    • Server PID: #{self() |> inspect(pretty: true)}
     • 'terminate' reason: #{inspect(reason, pretty: true)}
     • Game being terminated:
       #{inspect(game, pretty: true)}
-    • App: #{Mix.Project.config()[:app]}
-    • Library: #{@app}
+    • App: #{:application.get_application() |> elem(1)}
+    • Library: #{Application.get_application(__MODULE__)}
     • Module: #{inspect(__MODULE__)}
     """
   end
@@ -39,13 +38,13 @@ defmodule Buzzword.Bingo.Engine.Log do
     \nSaving game...
     • Server:
       #{game.name |> Server.via() |> inspect(pretty: true)}
-    • PID: #{self() |> inspect(pretty: true)}
+    • Server PID: #{self() |> inspect(pretty: true)}
     • 'handle_call' request:
       #{inspect(request, pretty: true)}
     • Game being saved:
       #{inspect(game, pretty: true)}
-    • App: #{Mix.Project.config()[:app]}
-    • Library: #{@app}
+    • App: #{:application.get_application() |> elem(1)}
+    • Library: #{Application.get_application(__MODULE__)}
     • Module: #{inspect(__MODULE__)}
     """
   end

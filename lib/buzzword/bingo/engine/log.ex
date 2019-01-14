@@ -1,5 +1,6 @@
 defmodule Buzzword.Bingo.Engine.Log do
   use File.Only.Logger
+  use PersistConfig
 
   alias Buzzword.Bingo.Engine.Server
 
@@ -12,8 +13,8 @@ defmodule Buzzword.Bingo.Engine.Log do
     • 'terminate' reason: #{inspect(reason, pretty: true)}
     • Game being terminated:
       #{inspect(game, pretty: true)}
-    • App: #{:application.get_application() |> elem(1)}
-    • Library: #{Application.get_application(__MODULE__)}
+    • App: #{Mix.Project.config()[:app]}
+    • Library: #{@app}
     • Module: #{inspect(__MODULE__)}
     """
   end
@@ -27,8 +28,8 @@ defmodule Buzzword.Bingo.Engine.Log do
     • 'terminate' reason: #{inspect(reason, pretty: true)}
     • Game being terminated:
       #{inspect(game, pretty: true)}
-    • App: #{:application.get_application() |> elem(1)}
-    • Library: #{Application.get_application(__MODULE__)}
+    • App: #{Mix.Project.config()[:app]}
+    • Library: #{@app}
     • Module: #{inspect(__MODULE__)}
     """
   end
@@ -43,8 +44,8 @@ defmodule Buzzword.Bingo.Engine.Log do
       #{inspect(request, pretty: true)}
     • Game being saved:
       #{inspect(game, pretty: true)}
-    • App: #{:application.get_application() |> elem(1)}
-    • Library: #{Application.get_application(__MODULE__)}
+    • App: #{Mix.Project.config()[:app]}
+    • Library: #{@app}
     • Module: #{inspect(__MODULE__)}
     """
   end

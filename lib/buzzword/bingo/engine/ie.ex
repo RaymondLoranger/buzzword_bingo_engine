@@ -3,6 +3,8 @@ defmodule Buzzword.Bingo.Engine.IE do
 
   # Example of an IEx session...
   #
+  #   iex -S mix
+  #
   #   use Buzzword.Bingo.Engine.IE
   #   ray = Player.new("Ray", "light_yellow")
   #   Engine.new_game("spring-moon", 4)
@@ -41,6 +43,7 @@ defmodule Buzzword.Bingo.Engine.IE do
 
       alias Buzzword.Bingo.{Engine, Game, Player, Square, Summary}
       alias Buzzword.Cache
+      alias IO.ANSI.Plus, as: ANSI
       :ok
     end
   end

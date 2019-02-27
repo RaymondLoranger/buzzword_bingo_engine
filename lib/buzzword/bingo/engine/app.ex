@@ -1,5 +1,5 @@
 defmodule Buzzword.Bingo.Engine.App do
-  # @moduledoc false
+  @moduledoc false
 
   use Application
   use PersistConfig

@@ -1,5 +1,5 @@
 defmodule Buzzword.Bingo.Engine.Sup do
-  # @moduledoc false
+  @moduledoc false
 
   use Supervisor
 
@@ -16,9 +16,9 @@ defmodule Buzzword.Bingo.Engine.Sup do
           {:ok, {:supervisor.sup_flags(), [:supervisor.child_spec()]}} | :ignore
   def init(:ok) do
     [
-      # Child spec relying on use DynamicSupervisor...
+      # Child spec relying on `use DynamicSupervisor`...
       {DynSup, :ok},
-      # Child spec relying on use GenServer...
+      # Child spec relying on `use GenServer`...
       {Restart, :ok}
     ]
     |> Supervisor.init(strategy: :rest_for_one)

@@ -1,5 +1,5 @@
 defmodule Buzzword.Bingo.Engine.App do
-  @moduledoc false
+  # @moduledoc false
 
   use Application
   use PersistConfig
@@ -16,7 +16,7 @@ defmodule Buzzword.Bingo.Engine.App do
 
     [
       {Registry, keys: :unique, name: @reg},
-      # Child spec relying on use Supervisor...
+      # Child spec relying on `use Supervisor`...
       {Sup, :ok}
     ]
     |> Supervisor.start_link(name: App, strategy: :rest_for_one)

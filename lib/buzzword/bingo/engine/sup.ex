@@ -1,5 +1,5 @@
 defmodule Buzzword.Bingo.Engine.Sup do
-  @moduledoc false
+  # @moduledoc false
 
   use Supervisor
 

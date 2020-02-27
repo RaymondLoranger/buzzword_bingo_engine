@@ -33,12 +33,12 @@ defmodule Buzzword.Bingo.Engine.IE do
       alias Buzzword.Bingo.Engine.Server.Restart
 
       alias Buzzword.Bingo.Engine.{
-        App,
         Callback,
         DynSup,
         Log,
         Server,
-        Sup
+        Sup,
+        Top
       }
 
       alias Buzzword.Bingo.{Engine, Game, Player, Square, Summary}

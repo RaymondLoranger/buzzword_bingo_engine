@@ -1,4 +1,6 @@
 defmodule Buzzword.Bingo.Engine.Log do
+  @moduledoc false
+
   use File.Only.Logger
 
   alias Buzzword.Bingo.Engine.Server

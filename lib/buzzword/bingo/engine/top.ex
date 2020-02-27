@@ -1,4 +1,4 @@
-defmodule Buzzword.Bingo.Engine.App do
+defmodule Buzzword.Bingo.Engine.Top do
   @moduledoc false
 
   use Application
@@ -19,6 +19,6 @@ defmodule Buzzword.Bingo.Engine.App do
       # Child spec relying on `use Supervisor`...
       {Sup, :ok}
     ]
-    |> Supervisor.start_link(name: App, strategy: :rest_for_one)
+    |> Supervisor.start_link(name: Top, strategy: :rest_for_one)
   end
 end

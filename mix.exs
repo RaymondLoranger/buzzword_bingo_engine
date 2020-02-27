@@ -4,7 +4,7 @@ defmodule Buzzword.Bingo.Engine.MixProject do
   def project do
     [
       app: :buzzword_bingo_engine,
-      version: "0.1.8",
+      version: "0.1.9",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -16,7 +16,7 @@ defmodule Buzzword.Bingo.Engine.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Buzzword.Bingo.Engine.App, :ok}
+      mod: {Buzzword.Bingo.Engine.Top, :ok}
     ]
   end
 
@@ -29,7 +29,7 @@ defmodule Buzzword.Bingo.Engine.MixProject do
       {:file_only_logger, "~> 0.1"},
       {:dynamic_supervisor_proxy, "~> 0.1"},
       {:gen_server_proxy, "~> 0.1"},
-      {:persist_config, "~> 0.1"},
+      {:persist_config, "~> 0.1", runtime: false},
       {:buzzword_bingo_game, path: "../buzzword_bingo_game"},
       {:buzzword_bingo_player, path: "../buzzword_bingo_player"},
       {:buzzword_bingo_summary, path: "../buzzword_bingo_summary"},

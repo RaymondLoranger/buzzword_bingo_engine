@@ -1,4 +1,6 @@
 defmodule Buzzword.Bingo.Engine.Callback do
+  @moduledoc false
+
   @behaviour GenServer.Proxy.Behaviour
 
   alias Buzzword.Bingo.Engine.Server

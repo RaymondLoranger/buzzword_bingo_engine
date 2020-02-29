@@ -10,6 +10,8 @@ defmodule Buzzword.Bingo.Engine.Server do
   alias Buzzword.Bingo.Engine.Log
   alias Buzzword.Bingo.{Game, Summary}
 
+  require Logger
+
   @type from :: GenServer.from()
   @type on_start :: GenServer.on_start()
   @type reply :: {:reply, Summary.t(), Game.t(), timeout}
@@ -40,8 +42,13 @@ defmodule Buzzword.Bingo.Engine.Server do
   @spec game(String.t(), pos_integer) :: Game.t()
   defp game(game_name, size) do
     case :ets.lookup(@ets, key(game_name)) do
-      [] -> game_name |> Game.new(size) |> save(nil)
-      [{_key, game}] -> game
+      [] ->
+        Logger.info("\nSpawned server process for game '#{game_name}'.\n")
+        game_name |> Game.new(size) |> save(nil)
+
+      [{_key, game}] ->
+        Logger.info("\nRestarted server process for game '#{game_name}'.\n")
+        game
     end
   end
 

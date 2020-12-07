@@ -1,46 +1,70 @@
 defmodule Buzzword.Bingo.Engine.Log do
-  @moduledoc false
-
   use File.Only.Logger
 
-  alias Buzzword.Bingo.Engine.Server
+  alias Buzzword.Bingo.Engine.GameServer
 
-  error :terminate, {reason, game} do
+  error :terminate, {reason, game, env} do
     """
     \nTerminating game...
+    • Inside function:
+      #{fun(env)}
     • Server:
-      #{game.name |> Server.via() |> inspect(pretty: true)}
-    • Server PID: #{self() |> inspect(pretty: true)}
-    • 'terminate' reason: #{inspect(reason, pretty: true)}
+      #{game.name |> GameServer.via() |> inspect()}
+    • Server PID: #{self() |> inspect()}
+    • 'terminate' reason: #{inspect(reason)}
     • Game being terminated:
-      #{inspect(game, pretty: true)}
+      #{inspect(game)}
     #{from()}
     """
   end
 
-  info :terminate, {reason, game} do
+  info :terminate, {reason, game, env} do
     """
     \nTerminating game...
+    • Inside function:
+      #{fun(env)}
     • Server:
-      #{game.name |> Server.via() |> inspect(pretty: true)}
-    • Server PID: #{self() |> inspect(pretty: true)}
-    • 'terminate' reason: #{inspect(reason, pretty: true)}
+      #{game.name |> GameServer.via() |> inspect()}
+    • Server PID: #{self() |> inspect()}
+    • 'terminate' reason: #{inspect(reason)}
     • Game being terminated:
-      #{inspect(game, pretty: true)}
+      #{inspect(game)}
     #{from()}
     """
   end
 
-  info :save, {game, request} do
+  info :save, {game, request, env} do
     """
     \nSaving game...
+    • Inside function:
+      #{fun(env)}
     • Server:
-      #{game.name |> Server.via() |> inspect(pretty: true)}
-    • Server PID: #{self() |> inspect(pretty: true)}
+      #{game.name |> GameServer.via() |> inspect()}
+    • Server PID: #{self() |> inspect()}
     • 'handle_call' request:
-      #{inspect(request, pretty: true)}
+      #{inspect(request)}
     • Game being saved:
-      #{inspect(game, pretty: true)}
+      #{inspect(game)}
+    #{from()}
+    """
+  end
+
+  info :spawned, {game_name, game_size, pid} do
+    """
+    \nSpawned game server process...
+    • Game name: #{game_name}
+    • Game size: #{game_size}
+    • Server PID: #{inspect(pid)}
+    #{from()}
+    """
+  end
+
+  info :restarted, {game_name, game_size, pid} do
+    """
+    \nRestarted game server process...
+    • Game name: #{game_name}
+    • Game size: #{game_size}
+    • Server PID: #{inspect(pid)}
     #{from()}
     """
   end

@@ -4,8 +4,8 @@ defmodule Buzzword.Bingo.Engine.MixProject do
   def project do
     [
       app: :buzzword_bingo_engine,
-      version: "0.1.9",
-      elixir: "~> 1.7",
+      version: "0.1.10",
+      elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps()
       # dialyzer: [plt_add_apps: [:mix]]
@@ -16,27 +16,27 @@ defmodule Buzzword.Bingo.Engine.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Buzzword.Bingo.Engine.Top, :ok}
+      mod: {Buzzword.Bingo.Engine.TopSup, :ok}
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:buzzword_bingo_game, github: "RaymondLoranger/buzzword_bingo_game"},
+      {:buzzword_bingo_player, github: "RaymondLoranger/buzzword_bingo_player"},
+      {:buzzword_bingo_summary,
+       github: "RaymondLoranger/buzzword_bingo_summary"},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
+      {:dynamic_supervisor_proxy, "~> 0.1"},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
+      {:file_only_logger, "~> 0.1"},
+      {:gen_server_proxy, "~> 0.1"},
+      {:log_reset, "~> 0.1"},
+      {:logger_file_backend, "~> 0.0.9"},
       {:mix_tasks,
        github: "RaymondLoranger/mix_tasks", only: :dev, runtime: false},
-      {:log_reset, "~> 0.1"},
-      {:file_only_logger, "~> 0.1"},
-      {:dynamic_supervisor_proxy, "~> 0.1"},
-      {:gen_server_proxy, "~> 0.1"},
-      {:persist_config, "~> 0.1", runtime: false},
-      {:buzzword_bingo_game, path: "../buzzword_bingo_game"},
-      {:buzzword_bingo_player, path: "../buzzword_bingo_player"},
-      {:buzzword_bingo_summary, path: "../buzzword_bingo_summary"},
-      {:logger_file_backend, "~> 0.0.9"},
-      {:earmark, "~> 1.0", only: :dev},
-      {:ex_doc, "~> 0.14", only: :dev, runtime: false},
-      {:dialyxir, "~> 0.5", only: :dev, runtime: false}
+      {:persist_config, "~> 0.4", runtime: false}
     ]
   end
 end

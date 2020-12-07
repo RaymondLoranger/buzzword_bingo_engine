@@ -1,14 +1,12 @@
-defmodule Buzzword.Bingo.Engine.Top do
-  @moduledoc false
-
+defmodule Buzzword.Bingo.Engine.TopSup do
   use Application
   use PersistConfig
 
   alias __MODULE__
-  alias Buzzword.Bingo.Engine.Sup
+  alias Buzzword.Bingo.Engine.GameSup
 
-  @ets Application.get_env(@app, :ets_name)
-  @reg Application.get_env(@app, :registry)
+  @ets get_env(:ets_name)
+  @reg get_env(:registry)
 
   @spec start(Application.start_type(), term) :: {:ok, pid}
   def start(_type, :ok) do
@@ -17,8 +15,8 @@ defmodule Buzzword.Bingo.Engine.Top do
     [
       {Registry, keys: :unique, name: @reg},
       # Child spec relying on `use Supervisor`...
-      {Sup, :ok}
+      {GameSup, :ok}
     ]
-    |> Supervisor.start_link(name: Top, strategy: :rest_for_one)
+    |> Supervisor.start_link(name: TopSup, strategy: :one_for_one)
   end
 end

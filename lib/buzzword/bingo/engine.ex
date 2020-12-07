@@ -2,85 +2,84 @@
 # │ Based on the course "Multi-Player Bingo" by Mike and Nicole Clark. │
 # └────────────────────────────────────────────────────────────────────┘
 defmodule Buzzword.Bingo.Engine do
+  @moduledoc """
+  Models the _Multi-Player Bingo_ game.
+
+  ##### Based on the course [Multi-Player Bingo](https://pragmaticstudio.com/courses/unpacked-bingo) by Mike and Nicole Clark.
+  """
+
   use GenServer.Proxy
   use PersistConfig
 
-  @course_ref Application.get_env(@app, :course_ref)
+  alias Buzzword.Bingo.Engine.{DynGameSup, GameServer}
+  alias Buzzword.Bingo.{Game, Player, Summary}
 
-  @moduledoc """
-  Models the _Multi-Player Bingo_ game.
-  \n##### #{@course_ref}
-  """
-
-  alias Buzzword.Bingo.Engine.{DynSup, Server}
-  alias Buzzword.Bingo.{Player, Summary}
-
-  @reg Application.get_env(@app, :registry)
-  @size_range Application.get_env(@app, :size_range)
+  @reg get_env(:registry)
+  @size_range get_env(:size_range)
 
   @doc """
   Starts a new game server process and supervises it.
   """
   @spec new_game(String.t(), pos_integer) :: Supervisor.on_start_child()
   def new_game(game_name, size)
-      when is_binary(game_name) and size in @size_range,
-      do: DynamicSupervisor.start_child(DynSup, {Server, {game_name, size}})
+      when is_binary(game_name) and size in @size_range do
+    DynamicSupervisor.start_child(DynGameSup, {GameServer, {game_name, size}})
+  end
 
   @doc """
   Stops a game server process normally. It won't be restarted.
   """
-  @spec end_game(String.t()) :: :ok
+  @spec end_game(String.t()) :: :ok | {:error, term}
   def end_game(game_name) when is_binary(game_name),
     do: stop(:shutdown, game_name)
 
   @doc """
   Returns the summary of a game.
   """
-  @spec summary(String.t()) :: Summary.t() | :ok
-  def summary(game_name) when is_binary(game_name),
-    do: call(:summary, game_name)
+  @spec game_summary(String.t()) :: Summary.t() | {:error, term}
+  def game_summary(game_name) when is_binary(game_name),
+    do: call(:game_summary, game_name)
 
   @doc """
-  Prints the summary of a game as a table.
+  Prints the summary of a game as a formatted table.
   """
-  @spec summary_table(String.t()) :: :ok
-  def summary_table(game_name) when is_binary(game_name) do
-    with %Summary{} = summary <- summary(game_name),
-         do: Summary.table(summary),
-         else: (:ok -> :ok)
-  end
+  @spec print_summary(String.t()) :: :ok | {:error, term}
+  def print_summary(game_name) when is_binary(game_name),
+    do: call(:print_summary, game_name)
 
   @doc """
   Marks a square for a player.
   """
-  @spec mark(String.t(), String.t(), Player.t()) :: Summary.t() | :ok
-  def mark(game_name, phrase, %Player{} = player)
+  @spec mark_square(String.t(), String.t(), Player.t()) ::
+          Game.t() | {:error, term}
+  def mark_square(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
-      do: call({:mark, phrase, player}, game_name)
+      do: call({:mark_square, phrase, player}, game_name)
 
   @doc """
   Returns a sorted list of registered game names.
   """
   @spec game_names :: [String.t() | atom]
   def game_names do
-    DynamicSupervisor.which_children(DynSup)
+    DynamicSupervisor.which_children(DynGameSup)
     |> Enum.map(&child_name/1)
     |> Enum.sort()
   end
 
   @doc """
-  Returns the `pid` of the game server process registered under the
+  Returns the `pid` of the game server process registered via the
   given `game_name`, or `nil` if no process is registered.
   """
   @spec game_pid(String.t()) :: pid | nil
-  def game_pid(game_name), do: game_name |> Server.via() |> GenServer.whereis()
+  def game_pid(game_name),
+    do: game_name |> GameServer.via() |> GenServer.whereis()
 
   ## Private functions
 
   @spec child_name(tuple) :: String.t() | atom
   defp child_name({:undefined, pid, :worker, modules}) when is_pid(pid) do
-    if Server in modules do
-      [{Server, game_name}] = Registry.keys(@reg, pid)
+    if GameServer in modules do
+      [{GameServer, game_name}] = Registry.keys(@reg, pid)
       game_name
     else
       :worker

@@ -1,16 +1,14 @@
-defmodule Buzzword.Bingo.Engine.Callback do
-  @moduledoc false
+defmodule Buzzword.Bingo.Engine.GenServerProxy do
+  @behaviour GenServer.Proxy
 
-  @behaviour GenServer.Proxy.Behaviour
-
-  alias Buzzword.Bingo.Engine.Server
+  alias Buzzword.Bingo.Engine.GameServer
   alias IO.ANSI
 
-  @impl GenServer.Proxy.Behaviour
+  @impl GenServer.Proxy
   @spec server_name(String.t()) :: GenServer.name()
-  def server_name(game_name), do: Server.via(game_name)
+  defdelegate server_name(game_name), to: GameServer, as: :via
 
-  @impl GenServer.Proxy.Behaviour
+  @impl GenServer.Proxy
   @spec server_unregistered(String.t()) :: :ok
   def server_unregistered(game_name) do
     [

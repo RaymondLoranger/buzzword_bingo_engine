@@ -10,10 +10,9 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   alias Buzzword.Bingo.Engine.Log
   alias Buzzword.Bingo.{Game, Summary}
 
-  @type from :: GenServer.from()
-  @type handle_call :: {:reply, term, Game.t(), timeout}
-  @type handle_info :: {:stop, reason :: tuple, Game.t()} | {:noreply, Game.t()}
-  @type on_start :: GenServer.on_start()
+  @typep handle_call :: {:reply, term, Game.t(), timeout}
+  @typep handle_info ::
+           {:stop, reason :: tuple, Game.t()} | {:noreply, Game.t()}
 
   @ets get_env(:ets_name)
   @reg get_env(:registry)
@@ -23,7 +22,8 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   @doc """
   Spawns a new game server process to be registered via `game_name`.
   """
-  @spec start_link({game_name :: String.t(), size :: pos_integer}) :: on_start
+  @spec start_link({game_name :: String.t(), size :: pos_integer}) ::
+          GenServer.on_start()
   def start_link({game_name, size}) do
     GenServer.start_link(GameServer, {game_name, size}, name: via(game_name))
   end
@@ -64,7 +64,7 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   @spec init({String.t(), pos_integer}) :: {:ok, Game.t(), timeout}
   def init({game_name, size}), do: {:ok, game(game_name, size), @timeout}
 
-  @spec handle_call(term, from, Game.t()) :: handle_call
+  @spec handle_call(term, GenServer.from(), Game.t()) :: handle_call
   def handle_call(:game_summary, _from, game) do
     {:reply, Summary.new(game), game, @timeout}
   end

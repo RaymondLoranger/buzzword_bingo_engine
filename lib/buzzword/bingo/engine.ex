@@ -68,7 +68,7 @@ defmodule Buzzword.Bingo.Engine do
 
   @doc """
   Returns the `pid` of the game server process registered via the
-  given `game_name`, or `nil` if no process is registered.
+  given `game_name`, or `nil` if no such process is registered.
   """
   @spec game_pid(String.t()) :: pid | nil
   def game_pid(game_name),

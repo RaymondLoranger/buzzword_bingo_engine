@@ -119,7 +119,7 @@ defmodule Buzzword.Bingo.Engine.IE do
   def keep_killing(name) when is_atom(name) or is_binary(name) do
     spawn(fn ->
       for _ <- Stream.cycle([:ok]) do
-        name |> pid() |> Process.exit(:kill)
+        pid(name) |> Process.exit(:kill)
         pause(name) |> Process.sleep()
       end
     end)
@@ -138,7 +138,7 @@ defmodule Buzzword.Bingo.Engine.IE do
   @spec mark_square(atom | binary, String.t()) :: :ok
   def mark_square(target, phrase)
       when (is_atom(target) or is_binary(target)) and is_binary(phrase) do
-    target |> keep_killing() |> do_mark_square(phrase)
+    keep_killing(target) |> do_mark_square(phrase)
   end
 
   ## Private functions

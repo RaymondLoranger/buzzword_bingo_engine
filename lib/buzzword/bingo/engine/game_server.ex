@@ -10,58 +10,57 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   alias Buzzword.Bingo.Engine.Log
   alias Buzzword.Bingo.{Game, Summary}
 
-  @typep handle_call :: {:reply, term, Game.t(), timeout}
-  @typep handle_info ::
-           {:stop, reason :: tuple, Game.t()} | {:noreply, Game.t()}
-
   @ets get_env(:ets_name)
   @reg get_env(:registry)
   @timeout :timer.minutes(30)
-  @wait 500
+  @wait 100
+
+  @type handle_call :: {:reply, term, Game.t(), timeout}
+  @type handle_info ::
+          {:stop, reason :: tuple, Game.t()} | {:noreply, Game.t()}
 
   @doc """
   Spawns a new game server process to be registered via `game_name`.
   """
-  @spec start_link({game_name :: String.t(), size :: pos_integer}) ::
-          GenServer.on_start()
-  def start_link({game_name, size}) do
+  @spec start_link({Game.name(), Game.size()}) :: GenServer.on_start()
+  def start_link({game_name, size} = _init_arg) do
     GenServer.start_link(GameServer, {game_name, size}, name: via(game_name))
   end
 
   @doc """
-  Returns a tuple used to register and look up a game server process by name.
+  Allows to register or look up a game server process via `game_name`.
   """
-  @spec via(String.t()) :: {:via, Registry, tuple}
+  @spec via(Game.name()) :: {:via, Registry, tuple}
   def via(game_name), do: {:via, Registry, {@reg, key(game_name)}}
 
   ## Private functions
 
-  @spec key(String.t()) :: tuple
+  @spec key(Game.name()) :: tuple
   defp key(game_name), do: {GameServer, game_name}
 
-  @spec game(String.t(), pos_integer) :: Game.t()
+  @spec game(Game.name(), Game.size()) :: Game.t()
   defp game(game_name, size) do
     case :ets.lookup(@ets, key(game_name)) do
       [] ->
-        :ok = Log.info(:spawned, {game_name, size, self()})
-        game_name |> Game.new(size) |> save(nil)
+        :ok = Log.info(:spawned, {game_name, size})
+        Game.new(game_name, size) |> save(nil)
 
       [{_key, game}] ->
-        :ok = Log.info(:restarted, {game_name, size, self()})
+        :ok = Log.info(:restarted, {game_name, size})
         game
     end
   end
 
   @spec save(Game.t(), term) :: Game.t()
   defp save(game, request) do
-    :ok = Log.info(:save, {game, request, __ENV__})
+    :ok = Log.info(:saving, {game, request, __ENV__})
     true = :ets.insert(@ets, {key(game.name), game})
     game
   end
 
   ## Callbacks
 
-  @spec init({String.t(), pos_integer}) :: {:ok, Game.t(), timeout}
+  @spec init({Game.name(), Game.size()}) :: {:ok, Game.t(), timeout}
   def init({game_name, size}), do: {:ok, game(game_name, size), @timeout}
 
   @spec handle_call(term, GenServer.from(), Game.t()) :: handle_call
@@ -70,12 +69,12 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   end
 
   def handle_call(:print_summary, _from, game) do
-    :ok = game |> Summary.new() |> Summary.print()
+    :ok = Summary.new(game) |> Summary.print()
     {:reply, :ok, game, @timeout}
   end
 
   def handle_call({:mark_square, phrase, player} = request, _from, game) do
-    game = game |> Game.mark_square(phrase, player) |> save(request)
+    game = Game.mark_square(game, phrase, player) |> save(request)
     {:reply, game, game, @timeout}
   end
 

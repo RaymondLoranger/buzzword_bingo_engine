@@ -9,7 +9,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Inside function:
       #{fun(env)}
     • Server:
-      #{game.name |> GameServer.via() |> inspect()}
+      #{GameServer.via(game.name) |> inspect()}
     • Server PID: #{self() |> inspect()}
     • 'terminate' reason: #{inspect(reason)}
     • Game being terminated:
@@ -24,7 +24,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Inside function:
       #{fun(env)}
     • Server:
-      #{game.name |> GameServer.via() |> inspect()}
+      #{GameServer.via(game.name) |> inspect()}
     • Server PID: #{self() |> inspect()}
     • 'terminate' reason: #{inspect(reason)}
     • Game being terminated:
@@ -33,13 +33,13 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
   end
 
-  info :save, {game, request, env} do
+  info :saving, {game, request, env} do
     """
     \nSaving game...
     • Inside function:
       #{fun(env)}
     • Server:
-      #{game.name |> GameServer.via() |> inspect()}
+      #{GameServer.via(game.name) |> inspect()}
     • Server PID: #{self() |> inspect()}
     • 'handle_call' request:
       #{inspect(request)}
@@ -49,22 +49,22 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
   end
 
-  info :spawned, {game_name, game_size, pid} do
+  info :spawned, {game_name, game_size} do
     """
     \nSpawned game server process...
     • Game name: #{game_name}
     • Game size: #{game_size}
-    • Server PID: #{inspect(pid)}
+    • Server PID: #{self() |> inspect()}
     #{from()}
     """
   end
 
-  info :restarted, {game_name, game_size, pid} do
+  info :restarted, {game_name, game_size} do
     """
     \nRestarted game server process...
     • Game name: #{game_name}
     • Game size: #{game_size}
-    • Server PID: #{inspect(pid)}
+    • Server PID: #{self() |> inspect()}
     #{from()}
     """
   end

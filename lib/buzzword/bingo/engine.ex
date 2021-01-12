@@ -11,7 +11,7 @@ defmodule Buzzword.Bingo.Engine do
   use GenServer.Proxy
   use PersistConfig
 
-  alias Buzzword.Bingo.Engine.{DynGameSup, GameServer}
+  alias __MODULE__.{DynGameSup, GameServer}
   alias Buzzword.Bingo.{Game, Player, Summary}
 
   @reg get_env(:registry)
@@ -20,7 +20,7 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Starts a new game server process and supervises it.
   """
-  @spec new_game(String.t(), pos_integer) :: Supervisor.on_start_child()
+  @spec new_game(Game.name(), Game.size()) :: Supervisor.on_start_child()
   def new_game(game_name, size)
       when is_binary(game_name) and size in @size_range do
     DynamicSupervisor.start_child(DynGameSup, {GameServer, {game_name, size}})
@@ -29,28 +29,28 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Stops a game server process normally. It won't be restarted.
   """
-  @spec end_game(String.t()) :: :ok | {:error, term}
+  @spec end_game(Game.name()) :: :ok | {:error, term}
   def end_game(game_name) when is_binary(game_name),
     do: stop(:shutdown, game_name)
 
   @doc """
   Returns the summary of a game.
   """
-  @spec game_summary(String.t()) :: Summary.t() | {:error, term}
+  @spec game_summary(Game.name()) :: Summary.t() | {:error, term}
   def game_summary(game_name) when is_binary(game_name),
     do: call(:game_summary, game_name)
 
   @doc """
   Prints the summary of a game as a formatted table.
   """
-  @spec print_summary(String.t()) :: :ok | {:error, term}
+  @spec print_summary(Game.name()) :: :ok | {:error, term}
   def print_summary(game_name) when is_binary(game_name),
     do: call(:print_summary, game_name)
 
   @doc """
   Marks a square for a player.
   """
-  @spec mark_square(String.t(), String.t(), Player.t()) ::
+  @spec mark_square(Game.name(), String.t(), Player.t()) ::
           Game.t() | {:error, term}
   def mark_square(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
@@ -59,7 +59,7 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Returns a sorted list of registered game names.
   """
-  @spec game_names :: [String.t() | atom]
+  @spec game_names :: [Game.name() | atom]
   def game_names do
     DynamicSupervisor.which_children(DynGameSup)
     |> Enum.map(&child_name/1)
@@ -70,13 +70,13 @@ defmodule Buzzword.Bingo.Engine do
   Returns the `pid` of the game server process registered via the
   given `game_name`, or `nil` if no such process is registered.
   """
-  @spec game_pid(String.t()) :: pid | nil
+  @spec game_pid(Game.name()) :: pid | nil
   def game_pid(game_name),
-    do: game_name |> GameServer.via() |> GenServer.whereis()
+    do: GameServer.via(game_name) |> GenServer.whereis()
 
   ## Private functions
 
-  @spec child_name(tuple) :: String.t() | atom
+  @spec child_name(tuple) :: Game.name() | atom
   defp child_name({:undefined, pid, :worker, modules}) when is_pid(pid) do
     if GameServer in modules do
       [{GameServer, game_name}] = Registry.keys(@reg, pid)

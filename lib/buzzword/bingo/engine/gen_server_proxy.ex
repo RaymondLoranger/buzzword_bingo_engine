@@ -2,14 +2,15 @@ defmodule Buzzword.Bingo.Engine.GenServerProxy do
   @behaviour GenServer.Proxy
 
   alias Buzzword.Bingo.Engine.GameServer
+  alias Buzzword.Bingo.Game
   alias IO.ANSI
 
   @impl GenServer.Proxy
-  @spec server_name(String.t()) :: GenServer.name()
+  @spec server_name(Game.name()) :: GenServer.name()
   defdelegate server_name(game_name), to: GameServer, as: :via
 
   @impl GenServer.Proxy
-  @spec server_unregistered(String.t()) :: :ok
+  @spec server_unregistered(Game.name()) :: :ok
   def server_unregistered(game_name) do
     [
       :blue_background,

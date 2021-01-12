@@ -15,8 +15,7 @@ defmodule Buzzword.Bingo.Engine.GameRecovery do
 
   @spec restart_servers :: :ok
   defp restart_servers do
-    @ets
-    |> :ets.match_object({{GameServer, :_}, :_})
+    :ets.match_object(@ets, {{GameServer, :_}, :_})
     |> Enum.each(fn {{GameServer, _game_name}, game} ->
       # Child may already be started...
       DynamicSupervisor.start_child(

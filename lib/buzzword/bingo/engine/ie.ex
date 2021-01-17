@@ -22,7 +22,7 @@ defmodule Buzzword.Bingo.Engine.IE do
   use PersistConfig
 
   alias Buzzword.Bingo.Engine.HaikuName
-  alias Buzzword.Bingo.{Engine, Player}
+  alias Buzzword.Bingo.{Engine, Game, Player}
 
   @size_range get_env(:size_range)
 
@@ -112,7 +112,7 @@ defmodule Buzzword.Bingo.Engine.IE do
   @spec ray :: Player.t()
   def ray, do: Player.new("Ray", "light_yellow")
 
-  @spec blue_moon :: String.t()
+  @spec blue_moon :: Game.name()
   def blue_moon, do: "blue-moon"
 
   @spec keep_killing(atom | binary) :: pid
@@ -125,7 +125,7 @@ defmodule Buzzword.Bingo.Engine.IE do
     end)
   end
 
-  @spec new_games(pos_integer) :: [{String.t(), Supervisor.on_start_child()}]
+  @spec new_games(pos_integer) :: [{Game.name(), Supervisor.on_start_child()}]
   def new_games(count) when count in 2..500 do
     Enum.reduce(0..(count - 2), [blue_moon()], fn _, acc ->
       [HaikuName.generate() | acc]

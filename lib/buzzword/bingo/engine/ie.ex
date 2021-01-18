@@ -21,8 +21,7 @@ defmodule Buzzword.Bingo.Engine.IE do
 
   use PersistConfig
 
-  alias Buzzword.Bingo.Engine.HaikuName
-  alias Buzzword.Bingo.{Engine, Game, Player}
+  alias Buzzword.Bingo.{Engine, Game, Player, Square}
 
   @size_range get_env(:size_range)
 
@@ -39,7 +38,6 @@ defmodule Buzzword.Bingo.Engine.IE do
         GameServer,
         GameSup,
         GenServerProxy,
-        HaikuName,
         Log,
         Reg,
         TopSup
@@ -128,14 +126,14 @@ defmodule Buzzword.Bingo.Engine.IE do
   @spec new_games(pos_integer) :: [{Game.name(), Supervisor.on_start_child()}]
   def new_games(count) when count in 2..500 do
     Enum.reduce(0..(count - 2), [blue_moon()], fn _, acc ->
-      [HaikuName.generate() | acc]
+      [Game.haiku_name() | acc]
     end)
     |> Enum.map(fn name ->
       {name, Engine.new_game(name, Enum.random(@size_range))}
     end)
   end
 
-  @spec mark_square(atom | binary, String.t()) :: :ok
+  @spec mark_square(atom | binary, Square.phrase()) :: :ok
   def mark_square(target, phrase)
       when (is_atom(target) or is_binary(target)) and is_binary(phrase) do
     keep_killing(target) |> do_mark_square(phrase)
@@ -143,7 +141,7 @@ defmodule Buzzword.Bingo.Engine.IE do
 
   ## Private functions
 
-  @spec do_mark_square(pid, String.t()) :: :ok
+  @spec do_mark_square(pid, Square.phrase()) :: :ok
   defp do_mark_square(killer_pid, phrase) do
     for _ <- 1..10 do
       Engine.mark_square(blue_moon(), phrase, ray())

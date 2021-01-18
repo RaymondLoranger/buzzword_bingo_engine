@@ -12,7 +12,7 @@ defmodule Buzzword.Bingo.Engine do
   use PersistConfig
 
   alias __MODULE__.{DynGameSup, GameServer}
-  alias Buzzword.Bingo.{Game, Player, Summary}
+  alias Buzzword.Bingo.{Game, Player, Square, Summary}
 
   @reg get_env(:registry)
   @size_range get_env(:size_range)
@@ -50,7 +50,7 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Marks a square for a player.
   """
-  @spec mark_square(Game.name(), String.t(), Player.t()) ::
+  @spec mark_square(Game.name(), Square.phrase(), Player.t()) ::
           Game.t() | {:error, term}
   def mark_square(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),

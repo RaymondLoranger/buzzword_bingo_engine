@@ -117,8 +117,13 @@ defmodule Buzzword.Bingo.Engine.IE do
   def keep_killing(name) when is_atom(name) or is_binary(name) do
     spawn(fn ->
       for _ <- Stream.cycle([:ok]) do
-        pid(name) |> Process.exit(:kill)
-        pause(name) |> Process.sleep()
+        pid(name)
+        |> IO.inspect(label: "Killing #{inspect(name)}")
+        |> Process.exit(:kill)
+
+        pause(name)
+        |> IO.inspect(label: "Between kills (ms)")
+        |> Process.sleep()
       end
     end)
   end

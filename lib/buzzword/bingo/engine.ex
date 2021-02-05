@@ -51,10 +51,15 @@ defmodule Buzzword.Bingo.Engine do
   Marks a square for a player.
   """
   @spec mark_square(Game.name(), Square.phrase(), Player.t()) ::
-          Game.t() | {:error, term}
+          Summary.t() | {:error, term}
   def mark_square(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
       do: call({:mark_square, phrase, player}, game_name)
+
+  @doc """
+  Generates a unique, URL-friendly name such as "bold-frog-8249".
+  """
+  defdelegate haiku_name, to: Game
 
   @doc """
   Returns a sorted list of registered game names.

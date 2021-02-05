@@ -75,7 +75,7 @@ defmodule Buzzword.Bingo.Engine.GameServer do
 
   def handle_call({:mark_square, phrase, player} = request, _from, game) do
     game = Game.mark_square(game, phrase, player) |> save(request)
-    {:reply, game, game, @timeout}
+    {:reply, Summary.new(game), game, @timeout}
   end
 
   @spec handle_info(term, Game.t()) :: handle_info

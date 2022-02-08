@@ -5,16 +5,18 @@ defmodule Buzzword.Bingo.Engine.GameSup do
   alias Buzzword.Bingo.Engine.{DynGameSup, GameRecovery}
 
   @spec start_link(term) :: Supervisor.on_start()
-  def start_link(:ok), do: Supervisor.start_link(GameSup, :ok, name: GameSup)
+  def start_link(:ok = _init_arg),
+    do: Supervisor.start_link(GameSup, :ok, name: GameSup)
 
   ## Callbacks
 
   @spec init(term) ::
           {:ok, {:supervisor.sup_flags(), [:supervisor.child_spec()]}} | :ignore
-  def init(:ok) do
+  def init(:ok = _init_arg) do
     [
       # Child spec relying on `use DynamicSupervisor`...
       {DynGameSup, :ok},
+
       # Child spec relying on `use GenServer`...
       {GameRecovery, :ok}
     ]

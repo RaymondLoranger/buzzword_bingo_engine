@@ -1,4 +1,9 @@
 defmodule Buzzword.Bingo.Engine.GameRecovery do
+  @moduledoc """
+  Makes processes under the game supervisor fault-tolerant. If any crashes (or
+  is killed), it is immediately restarted and the system remains undisturbed.
+  """
+
   use GenServer
   use PersistConfig
 
@@ -8,7 +13,7 @@ defmodule Buzzword.Bingo.Engine.GameRecovery do
   @ets get_env(:ets_name)
 
   @spec start_link(term) :: GenServer.on_start()
-  def start_link(:ok),
+  def start_link(:ok = _arg),
     do: GenServer.start_link(GameRecovery, :ok, name: GameRecovery)
 
   ## Private functions
@@ -28,5 +33,5 @@ defmodule Buzzword.Bingo.Engine.GameRecovery do
   ## Callbacks
 
   @spec init(term) :: {:ok, term}
-  def init(:ok), do: {:ok, restart_servers()}
+  def init(:ok = _init_arg), do: {:ok, restart_servers()}
 end

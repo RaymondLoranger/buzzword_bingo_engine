@@ -1,6 +1,7 @@
 defmodule Buzzword.Bingo.Engine.GameServer do
   @moduledoc """
   A server process that holds a game struct as its state.
+  Times out after 30 minutes of inactivity.
   """
 
   use GenServer, restart: :transient
@@ -15,12 +16,8 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   @timeout :timer.minutes(30)
   @wait 100
 
-  @type handle_call :: {:reply, term, Game.t(), timeout}
-  @type handle_info ::
-          {:stop, reason :: tuple, Game.t()} | {:noreply, Game.t()}
-
   @doc """
-  Spawns a new game server process to be registered via `game_name`.
+  Spawns a game server process to be registered via a game name.
   """
   @spec start_link({Game.name(), Game.size()}) :: GenServer.on_start()
   def start_link({game_name, size} = _init_arg) do
@@ -42,11 +39,11 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   defp game(game_name, size) do
     case :ets.lookup(@ets, key(game_name)) do
       [] ->
-        :ok = Log.info(:spawned, {game_name, size})
+        :ok = Log.info(:spawned, {game_name, size, __ENV__})
         Game.new(game_name, size) |> save(nil)
 
       [{_key, game}] ->
-        :ok = Log.info(:restarted, {game_name, size})
+        :ok = Log.info(:restarted, {game_name, size, __ENV__})
         game
     end
   end
@@ -61,9 +58,11 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   ## Callbacks
 
   @spec init({Game.name(), Game.size()}) :: {:ok, Game.t(), timeout}
-  def init({game_name, size}), do: {:ok, game(game_name, size), @timeout}
+  def init({game_name, size} = _init_arg),
+    do: {:ok, game(game_name, size), @timeout}
 
-  @spec handle_call(term, GenServer.from(), Game.t()) :: handle_call
+  @spec handle_call(term, GenServer.from(), Game.t()) ::
+          {:reply, term, Game.t(), timeout}
   def handle_call(:game_summary, _from, game) do
     {:reply, Summary.new(game), game, @timeout}
   end
@@ -78,7 +77,8 @@ defmodule Buzzword.Bingo.Engine.GameServer do
     {:reply, Summary.new(game), game, @timeout}
   end
 
-  @spec handle_info(term, Game.t()) :: handle_info
+  @spec handle_info(term, Game.t()) ::
+          {:stop, reason :: tuple, Game.t()} | {:noreply, Game.t()}
   def handle_info(:timeout, game), do: {:stop, {:shutdown, :timeout}, game}
   def handle_info(_message, game), do: {:noreply, game}
 

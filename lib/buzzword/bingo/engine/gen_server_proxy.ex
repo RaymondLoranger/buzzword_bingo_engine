@@ -3,7 +3,6 @@ defmodule Buzzword.Bingo.Engine.GenServerProxy do
 
   alias Buzzword.Bingo.Engine.GameServer
   alias Buzzword.Bingo.Game
-  alias IO.ANSI
 
   @impl GenServer.Proxy
   @spec server_name(Game.name()) :: GenServer.name()
@@ -21,7 +20,7 @@ defmodule Buzzword.Bingo.Engine.GenServerProxy do
       :light_white,
       " not started."
     ]
-    |> ANSI.format()
+    |> IO.ANSI.format()
     |> IO.puts()
   end
 end

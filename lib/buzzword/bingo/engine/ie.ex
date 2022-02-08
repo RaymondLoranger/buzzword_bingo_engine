@@ -17,7 +17,8 @@ defmodule Buzzword.Bingo.Engine.IE do
   #   Engine.mark_square("icy-moon", "<phrase-in-table>", ray)
   #   Engine.print_summary("icy-moon")
   #   Engine.game_summary("icy-moon")
-  #   etc.
+  #   Engine.end_game("icy-moon")
+  #   Engine.end_game("crimson-sun")
 
   use PersistConfig
 
@@ -57,11 +58,13 @@ defmodule Buzzword.Bingo.Engine.IE do
   #   use Buzzword.Bingo.Engine.IE
   #   new_games(2) # starts 2 games with last called "blue-moon"
   #   Reset.reset_logs([:debug]) # optional
+  #   Reset.reset_logs(:all) # optional
   #   :ets.match(Ets, {{GameServer, :"$1"}, :_})
-  #   Engine.game_names
+  #   Engine.game_names()
   #   Engine.print_summary(blue_moon)
   #   mark_square(blue_moon, "<phrase-in-table>") # and then check the logs
   #   Engine.print_summary(blue_moon)
+  #   Engine.game_names() |> Enum.each(&Engine.end_game/1)
 
   ## Example of an IEx session...
   #
@@ -70,26 +73,28 @@ defmodule Buzzword.Bingo.Engine.IE do
   #   use Buzzword.Bingo.Engine.IE
   #   new_games(400) # starts 400 games with last called "blue-moon"
   #   Reset.reset_logs([:debug]) # optional
+  #   Reset.reset_logs(:all) # optional
   #   :ets.match(Ets, {{GameServer, :"$1"}, :_})
   #   Engine.game_names
   #   Engine.print_summary(blue_moon)
   #   mark_square(DynGameSup, "<phrase-in-table>") # and then check the logs
   #   Engine.print_summary(blue_moon)
+  #   Engine.game_names() |> Stream.map(&Engine.end_game/1) |> Enum.to_list()
 
   ## Example of an IEx session...
   #
   #   iex -S mix
   #
   #   use Buzzword.Bingo.Engine.IE
-  #   :observer.start # optional
-  #   Logger.remove_backend(:console, flush: false)
   #   new_games(300) # starts 300 new games with last called "blue-moon"
   #   Reset.reset_logs([:debug]) # optional
+  #   Reset.reset_logs(:all) # optional
   #   :ets.match(Ets, {{GameServer, :"$1"}, :_})
   #   Engine.game_names
   #   Engine.print_summary(blue_moon)
   #   mark_square(GameSup, "<phrase-in-table>") # and then check the logs
   #   Engine.print_summary(blue_moon)
+  #   Engine.game_names() |> Stream.map(&Engine.end_game/1) |> Enum.to_list()
 
   ## Example of an IEx session...
   #
@@ -99,6 +104,7 @@ defmodule Buzzword.Bingo.Engine.IE do
   #   :observer.start # optional
   #   new_games(2) # starts 2 games with last called "blue-moon"
   #   Reset.reset_logs([:debug]) # optional
+  #   Reset.reset_logs(:all) # optional
   #   Engine.print_summary(blue_moon)
   #   pid = keep_killing(blue_moon)
   #   Process.exit(pid, :kill)

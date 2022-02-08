@@ -31,21 +31,21 @@ defmodule Buzzword.Bingo.Engine do
   """
   @spec end_game(Game.name()) :: :ok | {:error, term}
   def end_game(game_name) when is_binary(game_name),
-    do: stop(:shutdown, game_name)
+    do: stop(game_name, :shutdown)
 
   @doc """
   Returns the summary of a game.
   """
   @spec game_summary(Game.name()) :: Summary.t() | {:error, term}
   def game_summary(game_name) when is_binary(game_name),
-    do: call(:game_summary, game_name)
+    do: call(game_name, :game_summary)
 
   @doc """
   Prints the summary of a game as a formatted table.
   """
   @spec print_summary(Game.name()) :: :ok | {:error, term}
   def print_summary(game_name) when is_binary(game_name),
-    do: call(:print_summary, game_name)
+    do: call(game_name, :print_summary)
 
   @doc """
   Marks a square for a player.
@@ -54,7 +54,7 @@ defmodule Buzzword.Bingo.Engine do
           Summary.t() | {:error, term}
   def mark_square(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
-      do: call({:mark_square, phrase, player}, game_name)
+      do: call(game_name, {:mark_square, phrase, player})
 
   @doc """
   Generates a unique, URL-friendly name such as "bold-frog-8249".
@@ -72,7 +72,7 @@ defmodule Buzzword.Bingo.Engine do
   end
 
   @doc """
-  Returns the `pid` of the game server process registered via the
+  Returns the pid of the game server process registered via the
   given `game_name`, or `nil` if no such process is registered.
   """
   @spec game_pid(Game.name()) :: pid | nil

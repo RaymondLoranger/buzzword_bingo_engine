@@ -59,6 +59,7 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Generates a unique, URL-friendly name such as "bold-frog-8249".
   """
+  @spec haiku_name :: Game.name()
   defdelegate haiku_name, to: Game
 
   @doc """

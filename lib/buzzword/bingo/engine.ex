@@ -48,7 +48,7 @@ defmodule Buzzword.Bingo.Engine do
     do: call(game_name, :print_summary)
 
   @doc """
-  Marks a square for a player.
+  Marks a square with a player.
   """
   @spec mark_square(Game.name(), Square.phrase(), Player.t()) ::
           Summary.t() | {:error, term}

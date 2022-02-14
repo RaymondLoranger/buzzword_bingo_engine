@@ -96,23 +96,6 @@ defmodule Buzzword.Bingo.Engine.IE do
   #   Engine.print_summary(blue_moon)
   #   Engine.game_names() |> Stream.map(&Engine.end_game/1) |> Enum.to_list()
 
-  ## Example of an IEx session...
-  #
-  #   iex -S mix
-  #
-  #   use Buzzword.Bingo.Engine.IE
-  #   :observer.start # optional
-  #   new_games(2) # starts 2 games with last called "blue-moon"
-  #   Reset.reset_logs([:debug]) # optional
-  #   Reset.reset_logs(:all) # optional
-  #   Engine.print_summary(blue_moon)
-  #   pid = keep_killing(blue_moon)
-  #   Process.exit(pid, :kill)
-  #   Engine.print_summary(blue_moon)
-  #   reg_pid = Process.whereis(Reg)
-  #   Process.exit(reg_pid, :kill) # => fatal, cannot kill the registry
-  #   Engine.print_summary(blue_moon)
-
   @spec ray :: Player.t()
   def ray, do: Player.new("Ray", "light_yellow")
 

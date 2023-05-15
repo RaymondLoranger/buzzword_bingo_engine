@@ -1,6 +1,6 @@
 # Buzzword Bingo Engine
 
-Models the _Multi-Player Bingo_ game.
+Models the _Multi-Player Buzzword Bingo_ game.
 
 ##### Based on the course [Multi-Player Bingo](https://pragmaticstudio.com/courses/unpacked-bingo) by Mike and Nicole Clark.
 

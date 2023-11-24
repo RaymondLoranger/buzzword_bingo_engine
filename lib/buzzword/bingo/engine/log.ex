@@ -10,7 +10,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Server PID: #{self() |> inspect()}
     • 'terminate' reason: #{inspect(reason) |> maybe_break(22)}
     • Game being terminated: #{inspect(game) |> maybe_break(25)}
-    #{from(env, __MODULE__)}
+    #{from(env, __MODULE__)}\
     """
   end
 
@@ -21,7 +21,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Server PID: #{self() |> inspect()}
     • 'terminate' reason: #{inspect(reason) |> maybe_break(22)}
     • Game being terminated: #{inspect(game) |> maybe_break(25)}
-    #{from(env, __MODULE__)}
+    #{from(env, __MODULE__)}\
     """
   end
 
@@ -32,7 +32,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Server PID: #{self() |> inspect()}
     • 'handle_call' request: #{inspect(request) |> maybe_break(25)}
     • Game being saved: #{inspect(game) |> maybe_break(20)}
-    #{from(env, __MODULE__)}
+    #{from(env, __MODULE__)}\
     """
   end
 
@@ -42,7 +42,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Game name: #{game_name}
     • Game size: #{game_size}
     • Server PID: #{self() |> inspect()}
-    #{from(env, __MODULE__)}
+    #{from(env, __MODULE__)}\
     """
   end
 
@@ -52,7 +52,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     • Game name: #{game_name}
     • Game size: #{game_size}
     • Server PID: #{self() |> inspect()}
-    #{from(env, __MODULE__)}
+    #{from(env, __MODULE__)}\
     """
   end
 end

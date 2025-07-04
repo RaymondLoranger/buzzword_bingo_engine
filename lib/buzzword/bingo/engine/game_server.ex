@@ -14,7 +14,7 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   @ets get_env(:ets_name)
   @reg get_env(:registry)
   @timeout :timer.minutes(30)
-  @wait 100
+  # @wait 100
 
   @doc """
   Spawns a game server process to be registered via a game name.
@@ -82,19 +82,19 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   def handle_info(:timeout, game), do: {:stop, {:shutdown, :timeout}, game}
   def handle_info(_message, game), do: {:noreply, game}
 
-  @spec terminate(term, Game.t()) :: :ok
+  @spec terminate(term, Game.t()) :: true
   def terminate(reason, game)
       when reason in [:shutdown, {:shutdown, :timeout}] do
     :ok = Log.info(:terminate, {reason, game, __ENV__})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
-    Process.sleep(@wait)
+    # Process.sleep(@wait)
   end
 
   def terminate(reason, game) do
     :ok = Log.error(:terminate, {reason, game, __ENV__})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
-    Process.sleep(@wait)
+    # Process.sleep(@wait)
   end
 end

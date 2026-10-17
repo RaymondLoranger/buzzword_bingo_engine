@@ -20,7 +20,7 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Starts a new game server process and supervises it.
   """
-  @spec new_game(Game.name(), Game.size()) :: Supervisor.on_start_child()
+  @spec new_game(Game.name(), Game.size()) :: DynamicSupervisor.on_start_child()
   def new_game(game_name, size)
       when is_binary(game_name) and size in @size_range do
     DynamicSupervisor.start_child(DynGameSup, {GameServer, {game_name, size}})
@@ -29,29 +29,28 @@ defmodule Buzzword.Bingo.Engine do
   @doc """
   Stops a game server process normally. It won't be restarted.
   """
-  @spec end_game(Game.name()) :: :ok | {:error, term}
+  @spec end_game(Game.name()) :: :ok
   def end_game(game_name) when is_binary(game_name),
     do: stop(game_name, :shutdown)
 
   @doc """
   Returns the summary of a game.
   """
-  @spec game_summary(Game.name()) :: Summary.t() | {:error, term}
+  @spec game_summary(Game.name()) :: Summary.t()
   def game_summary(game_name) when is_binary(game_name),
     do: call(game_name, :game_summary)
 
   @doc """
   Prints the summary of a game as a formatted table.
   """
-  @spec print_summary(Game.name()) :: :ok | {:error, term}
+  @spec print_summary(Game.name()) :: :ok
   def print_summary(game_name) when is_binary(game_name),
     do: call(game_name, :print_summary)
 
   @doc """
   Marks a square with a player.
   """
-  @spec mark_square(Game.name(), Square.phrase(), Player.t()) ::
-          Summary.t() | {:error, term}
+  @spec mark_square(Game.name(), Square.phrase(), Player.t()) :: Summary.t()
   def mark_square(game_name, phrase, %Player{} = player)
       when is_binary(game_name) and is_binary(phrase),
       do: call(game_name, {:mark_square, phrase, player})

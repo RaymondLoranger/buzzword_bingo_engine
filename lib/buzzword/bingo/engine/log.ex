@@ -3,7 +3,7 @@ defmodule Buzzword.Bingo.Engine.Log do
 
   alias Buzzword.Bingo.Engine.GameServer
 
-  error :terminate, {reason, game, env} do
+  error :terminating, {reason, game, env} do
     """
     \nTerminating game...
     • Server: #{GameServer.via(game.name) |> inspect() |> maybe_break(10)}
@@ -14,7 +14,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
   end
 
-  info :terminate, {reason, game, env} do
+  info :terminating, {reason, game, env} do
     """
     \nTerminating game...
     • Server: #{GameServer.via(game.name) |> inspect() |> maybe_break(10)}
@@ -36,9 +36,9 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
   end
 
-  info :spawned, {game_name, game_size, env} do
+  info :spawning, {game_name, game_size, env} do
     """
-    \nSpawned game server process...
+    \nSpawning game server process...
     • Game name: #{game_name}
     • Game size: #{game_size}
     • Server PID: #{self() |> inspect()}

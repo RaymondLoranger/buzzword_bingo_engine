@@ -9,6 +9,7 @@ defmodule Buzzword.Bingo.Engine.GameRecovery do
 
   alias __MODULE__
   alias Buzzword.Bingo.Engine.{DynGameSup, GameServer}
+  alias Buzzword.Bingo.Game
 
   @ets get_env(:ets_name)
 
@@ -16,22 +17,19 @@ defmodule Buzzword.Bingo.Engine.GameRecovery do
   def start_link(_arg = :ok),
     do: GenServer.start_link(GameRecovery, :ok, name: GameRecovery)
 
+  ## Callbacks
+
+  @spec init(term) :: {:ok, term}
+  def init(_init_arg = :ok), do: {:ok, restart_servers()}
+
   ## Private functions
 
   @spec restart_servers :: :ok
   defp restart_servers do
     :ets.match_object(@ets, {{GameServer, :_}, :_})
-    |> Enum.each(fn {{GameServer, _game_name}, game} ->
+    |> Enum.each(fn {{GameServer, _game_name}, %Game{name: name, size: size}} ->
       # Child may already be started...
-      DynamicSupervisor.start_child(
-        DynGameSup,
-        {GameServer, {game.name, game.size}}
-      )
+      DynamicSupervisor.start_child(DynGameSup, {GameServer, {name, size}})
     end)
   end
-
-  ## Callbacks
-
-  @spec init(term) :: {:ok, term}
-  def init(_init_arg = :ok), do: {:ok, restart_servers()}
 end

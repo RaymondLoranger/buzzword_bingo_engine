@@ -30,38 +30,13 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   @spec via(Game.name()) :: {:via, Registry, tuple}
   def via(game_name), do: {:via, Registry, {@reg, key(game_name)}}
 
-  ## Private functions
-
-  @spec key(Game.name()) :: tuple
-  defp key(game_name), do: {GameServer, game_name}
-
-  @spec game(Game.name(), Game.size()) :: Game.t()
-  defp game(game_name, size) do
-    case :ets.lookup(@ets, key(game_name)) do
-      [] ->
-        :ok = Log.info(:spawned, {game_name, size, __ENV__})
-        Game.new(game_name, size) |> save(nil)
-
-      [{_key, game}] ->
-        :ok = Log.info(:restarted, {game_name, size, __ENV__})
-        game
-    end
-  end
-
-  @spec save(Game.t(), term) :: Game.t()
-  defp save(game, request) do
-    :ok = Log.info(:saving, {game, request, __ENV__})
-    true = :ets.insert(@ets, {key(game.name), game})
-    game
-  end
-
   ## Callbacks
 
   @spec init({Game.name(), Game.size()}) :: {:ok, Game.t(), timeout}
   def init({game_name, size} = _init_arg),
     do: {:ok, game(game_name, size), @timeout}
 
-  @spec handle_call(term, GenServer.from(), Game.t()) ::
+  @spec handle_call(atom | tuple, GenServer.from(), Game.t()) ::
           {:reply, term, Game.t(), timeout}
   def handle_call(:game_summary, _from, game) do
     {:reply, Summary.new(game), game, @timeout}
@@ -85,16 +60,41 @@ defmodule Buzzword.Bingo.Engine.GameServer do
   @spec terminate(term, Game.t()) :: true
   def terminate(reason, game)
       when reason in [:shutdown, {:shutdown, :timeout}] do
-    :ok = Log.info(:terminate, {reason, game, __ENV__})
+    :ok = Log.info(:terminating, {reason, game, __ENV__})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
     # Process.sleep(@wait)
   end
 
   def terminate(reason, game) do
-    :ok = Log.error(:terminate, {reason, game, __ENV__})
+    :ok = Log.error(:terminating, {reason, game, __ENV__})
     true = :ets.delete(@ets, key(game.name))
     # Ensure message logged before exiting...
     # Process.sleep(@wait)
+  end
+
+  ## Private functions
+
+  @spec key(Game.name()) :: tuple
+  defp key(game_name), do: {GameServer, game_name}
+
+  @spec game(Game.name(), Game.size()) :: Game.t()
+  defp game(game_name, size) do
+    case :ets.lookup(@ets, key(game_name)) do
+      [] ->
+        :ok = Log.info(:spawning, {game_name, size, __ENV__})
+        Game.new(game_name, size) |> save(nil)
+
+      [{_key, game}] ->
+        :ok = Log.info(:restarted, {game_name, size, __ENV__})
+        game
+    end
+  end
+
+  @spec save(Game.t(), term) :: Game.t()
+  defp save(game, request) do
+    :ok = Log.info(:saving, {game, request, __ENV__})
+    true = :ets.insert(@ets, {key(game.name), game})
+    game
   end
 end

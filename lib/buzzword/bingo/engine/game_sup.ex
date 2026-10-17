@@ -19,6 +19,7 @@ defmodule Buzzword.Bingo.Engine.GameSup do
       # Child spec relying on `use GenServer`...
       {GameRecovery, :ok}
     ]
+    # NOTE: Strategy...          ↓ ↓ ↓ ↓ ↓ ↓ ↓
     |> Supervisor.init(strategy: :rest_for_one)
   end
 end

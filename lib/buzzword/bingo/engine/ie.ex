@@ -1,11 +1,11 @@
-defmodule Buzzword.Bingo.IE do
+defmodule Buzzword.Bingo.Engine.IE do
   @moduledoc false
 
   ## Example of an IEx session...
   #
   #   iex -S mix
   #
-  #   use Buzzword.Bingo.IE
+  #   use Buzzword.Bingo.EngineIE
   #   Engine.new_game("icy-moon", 4)
   #   Engine.new_game("icy-moon", 5) # => {:error, {:already_started, <pid>}}
   #   Engine.new_game("crimson-sun", 5)
@@ -39,6 +39,7 @@ defmodule Buzzword.Bingo.IE do
         GameServer,
         GameSup,
         GenServerProxy,
+        IE,
         Log,
         Reg,
         TopSup
@@ -55,7 +56,7 @@ defmodule Buzzword.Bingo.IE do
   #
   #   iex -S mix
   #
-  #   use Buzzword.Bingo.IE
+  #   use Buzzword.Bingo.Engine.IE
   #   games = new_games(100) # starts 100 games with last named "blue-moon"
   #   Enum.find(games, & elem(&1, 0) == "blue-moon") # will be highest PID
   #   Engine.print_summary(blue_moon())
@@ -72,7 +73,7 @@ defmodule Buzzword.Bingo.IE do
   #
   #   iex -S mix
   #
-  #   use Buzzword.Bingo.IE
+  #   use Buzzword.Bingo.Engine.IE
   #   games = new_games(400) # starts 400 games with last named "blue-moon"
   #   Enum.find(games, & elem(&1, 0) == "blue-moon") # will be highest PID
   #   Engine.print_summary(blue_moon())
@@ -89,7 +90,7 @@ defmodule Buzzword.Bingo.IE do
   #
   #   iex -S mix
   #
-  #   use Buzzword.Bingo.IE
+  #   use Buzzword.Bingo.Engine.IE
   #   games = new_games(500) # starts 500 games with last named "blue-moon"
   #   Enum.find(games, & elem(&1, 0) == "blue-moon") # will be highest PID
   #   Engine.print_summary(blue_moon())

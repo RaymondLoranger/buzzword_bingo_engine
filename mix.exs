@@ -4,7 +4,7 @@ defmodule Buzzword.Bingo.Engine.MixProject do
   def project do
     [
       app: :buzzword_bingo_engine,
-      version: "0.1.41",
+      version: "0.1.42",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       name: "Buzzword Bingo Engine",
@@ -27,10 +27,8 @@ defmodule Buzzword.Bingo.Engine.MixProject do
 
   defp package do
     [
-      files: ~w[
-        lib/buzzword/bingo/{engine,engine.ex} mix.exs README*
-        config/persist*.exs assets/buzzwords.csv
-      ],
+      files: ~w[lib mix.exs README* config/persist*.exs assets/buzzwords.csv],
+      exclude_patterns: ["lib/buzzword/bingo/engine/ie.ex"],
       maintainers: ["Raymond Loranger"],
       licenses: ["MIT"],
       links: %{"GitHub" => source_url()}

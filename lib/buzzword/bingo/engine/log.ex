@@ -7,7 +7,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
     \nTerminating game...
     • Server: #{GameServer.via(game.name) |> inspect() |> maybe_break(10)}
-    • Server PID: #{self() |> inspect()}
+    • Server PID: #{inspect(self())}
     • 'terminate' reason: #{inspect(reason) |> maybe_break(22)}
     • Game being terminated: #{inspect(game) |> maybe_break(25)}
     #{from(env, __MODULE__)}\
@@ -18,7 +18,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
     \nTerminating game...
     • Server: #{GameServer.via(game.name) |> inspect() |> maybe_break(10)}
-    • Server PID: #{self() |> inspect()}
+    • Server PID: #{inspect(self())}
     • 'terminate' reason: #{inspect(reason) |> maybe_break(22)}
     • Game being terminated: #{inspect(game) |> maybe_break(25)}
     #{from(env, __MODULE__)}\
@@ -29,7 +29,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     """
     \nSaving game...
     • Server: #{GameServer.via(game.name) |> inspect() |> maybe_break(10)}
-    • Server PID: #{self() |> inspect()}
+    • Server PID: #{inspect(self())}
     • 'handle_call' request: #{inspect(request) |> maybe_break(25)}
     • Game being saved: #{inspect(game) |> maybe_break(20)}
     #{from(env, __MODULE__)}\
@@ -41,7 +41,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     \nSpawning game server process...
     • Game name: #{game_name}
     • Game size: #{game_size}
-    • Server PID: #{self() |> inspect()}
+    • Server PID: #{inspect(self())}
     #{from(env, __MODULE__)}\
     """
   end
@@ -51,7 +51,7 @@ defmodule Buzzword.Bingo.Engine.Log do
     \nRestarted game server process...
     • Game name: #{game_name}
     • Game size: #{game_size}
-    • Server PID: #{self() |> inspect()}
+    • Server PID: #{inspect(self())}
     #{from(env, __MODULE__)}\
     """
   end
